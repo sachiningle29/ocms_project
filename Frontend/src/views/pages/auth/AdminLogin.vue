@@ -60,7 +60,7 @@ const handleAdminLogin = () => {
                     </div>
 
                     <div class="mt-8 text-center">
-                        <router-link to="/auth/welcome" class="text-primary font-medium hover:underline">Back to user login</router-link>
+                        <router-link to="/" class="text-primary font-medium hover:underline">Back to Welcome Page</router-link>
                     </div>
                 </div>
             </div>

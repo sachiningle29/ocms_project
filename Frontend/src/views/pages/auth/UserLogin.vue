@@ -59,8 +59,8 @@ const handleUserLogin = () => {
                         <Button label="Login as user "  @click="handleUserLogin" class="w-full"></Button>
                        
                     </div>
-                    <div class="mt-8 text-center">
-                        <router-link to="/auth/welcome" class="text-primary font-medium hover:underline">Back to user login</router-link>
+                     <div class="mt-8 text-center">
+                        <router-link to="/" class="text-primary font-medium hover:underline">Back to Welcome Page</router-link>
                     </div>
                 </div>
             </div>
