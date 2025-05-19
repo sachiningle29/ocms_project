@@ -9,9 +9,8 @@ const checked = ref(false);
 const router = useRouter();
 
 const handleAdminLogin = () => {
-  // Add your admin authentication logic here
-  console.log('Admin login attempt with:', email.value);
-  router.push('/admin/dashboard'); // Redirect to admin dashboard after login
+ 
+  router.push('/admin/dashboard'); 
 };
 </script>
 

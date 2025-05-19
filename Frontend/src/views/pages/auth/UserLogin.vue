@@ -1,10 +1,17 @@
 <script setup>
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
+const router = useRouter();
+
+const handleUserLogin = () => {
+ 
+  router.push('/user/dashboard'); 
+};
 </script>
 
 <template>
@@ -49,7 +56,8 @@ const checked = ref(false);
                             </div>
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                         </div> -->
-                        <Button label="Sign In" class="w-full" as="router-link" to="/"></Button>
+                        <Button label="Login as user "  @click="handleUserLogin" class="w-full"></Button>
+                       
                     </div>
                     <div class="mt-8 text-center">
                         <router-link to="/auth/welcome" class="text-primary font-medium hover:underline">Back to user login</router-link>
