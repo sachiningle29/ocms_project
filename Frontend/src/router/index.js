@@ -4,8 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-
-         {
+        {
             path: '/auth/UserLogin',
             name: 'UserLogin',
             component: () => import('@/views/pages/auth/UserLogin.vue')
@@ -16,9 +15,14 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/AdminLogin.vue')
         },
         {
-            path: '/',
+            path: '/user/',
+            name: 'AdminLogin',
+            component: () => import('@/views/pages/auth/AdminLogin.vue')
+        },
+        {
+            path: '/user/runningcontracts',
             name: 'welcome',
-            component: () => import('@/views/pages/auth/Welcome.vue')
+            component: () => import('@/views/user/running_contract/RunningContract.vue')
         },
         {
             path: '/',
@@ -136,14 +140,13 @@ const router = createRouter({
                 }
             ]
         },
-       
+
         {
             path: '/pages/notfound',
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
 
-       
         {
             path: '/auth/access',
             name: 'accessDenied',
