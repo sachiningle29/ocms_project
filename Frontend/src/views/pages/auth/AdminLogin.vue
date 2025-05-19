@@ -10,7 +10,7 @@ const router = useRouter();
 
 const handleAdminLogin = () => {
  
-  router.push('/dashboard'); 
+  router.push('/admin/dashboard'); 
 };
 </script>
 

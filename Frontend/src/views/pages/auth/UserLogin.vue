@@ -8,9 +8,9 @@ const password = ref('');
 const checked = ref(false);
 const router = useRouter();
 
-const handleAdminLogin = () => {
+const handleUserLogin = () => {
  
-  router.push('/dashboard'); 
+  router.push('/user/dashboard'); 
 };
 </script>
 
@@ -56,7 +56,7 @@ const handleAdminLogin = () => {
                             </div>
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                         </div> -->
-                        <Button label="Login as user "  @click="handleAdminLogin" class="w-full"></Button>
+                        <Button label="Login as user "  @click="handleUserLogin" class="w-full"></Button>
                        
                     </div>
                     <div class="mt-8 text-center">
