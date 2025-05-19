@@ -7,7 +7,7 @@ const model = ref([
     {
         //label: 'Home',
         items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
-                { label: 'Add Contract', icon: 'pi pi-fw pi-tablet', to: '/uikit/panel' },
+                { label: 'Add Contract', icon: 'pi pi-fw pi-tablet', to: '/uikit/formlayout' },
                 { label: 'Running Contract', icon: 'pi pi-fw pi-clone', to: '/uikit/overlay' },
                 { label: 'Under Hiring Contract', icon: 'pi pi-fw pi-image', to: '/uikit/media' },
                 { label: 'Add Milestone', icon: 'pi pi-fw pi-calendar', to: '/uikit/timeline' },
