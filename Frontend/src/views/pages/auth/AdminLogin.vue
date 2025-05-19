@@ -1,10 +1,18 @@
 <script setup>
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
+const router = useRouter();
+
+const handleAdminLogin = () => {
+  // Add your admin authentication logic here
+  console.log('Admin login attempt with:', email.value);
+  router.push('/admin/dashboard'); // Redirect to admin dashboard after login
+};
 </script>
 
 <template>
@@ -31,28 +39,30 @@ const checked = ref(false);
                                 />
                             </g>
                         </svg>
-                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to OCMS</div>
-                        <span class="text-muted-color font-medium">Sign in to continue</span>
+                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Admin Portal</div>
+                        <span class="text-muted-color font-medium">Enter your admin credentials</span>
                     </div>
 
                     <div>
-                        <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8" v-model="email" />
+                        <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Admin Email</label>
+                        <InputText id="email1" type="text" placeholder="Admin email address" class="w-full md:w-[30rem] mb-8" v-model="email" />
 
                         <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
+                        <Password id="password1" v-model="password" placeholder="Admin password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
 
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
                             <div class="flex items-center">
                                 <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
-                                <label for="rememberme1">Remember me</label>
+                                <label for="rememberme1">Remember this device</label>
                             </div>
-                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
+                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Reset admin password</span>
                         </div>
-                        <Button label="Sign In" class="w-full" as="router-link" to="/"></Button>
+                        <Button label="Login as Admin" class="w-full" @click="handleAdminLogin"></Button>
                     </div>
 
-                
+                    <div class="mt-8 text-center">
+                        <router-link to="/login" class="text-primary font-medium hover:underline">Back to user login</router-link>
+                    </div>
                 </div>
             </div>
         </div>

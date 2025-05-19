@@ -10,7 +10,7 @@ const router = createRouter({
             children: [
                 {
                     path: '/',
-                    redirect: '/auth/login'
+                    redirect: '/auth/welcome'
                 },
                 {
                     path: '/dashboard',
@@ -122,9 +122,24 @@ const router = createRouter({
         },
 
         {
-            path: '/auth/login',
-            name: 'login',
-            component: () => import('@/views/pages/auth/Login.vue')
+            path: '/auth/UserLogin',
+            name: 'UserLogin',
+            component: () => import('@/views/pages/auth/UserLogin.vue')
+        },
+        {
+            path: '/auth/AdminLogin',
+            name: 'AdminLogin',
+            component: () => import('@/views/pages/auth/AdminLogin.vue')
+        },
+        {
+            path: '/auth/welcome',
+            name: 'welcome',
+            component: () => import('@/views/pages/auth/Welcome.vue')
+        },
+        {
+            path: '/auth/welcome',
+            name: 'welcome',
+            component: () => import('@/views/pages/auth/Welcome.vue')
         },
         {
             path: '/auth/access',
