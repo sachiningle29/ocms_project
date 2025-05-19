@@ -5,10 +5,15 @@ import AppMenuItem from './AppMenuItem.vue';
 
 const model = ref([
     {
-        label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
-    },
-    {
+        //label: 'Home',
+        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
+                { label: 'Add Contract', icon: 'pi pi-fw pi-tablet', to: '/uikit/panel' },
+                { label: 'Running Contract', icon: 'pi pi-fw pi-clone', to: '/uikit/overlay' },
+                { label: 'Under Hiring Contract', icon: 'pi pi-fw pi-image', to: '/uikit/media' },
+                { label: 'Add Milestone', icon: 'pi pi-fw pi-calendar', to: '/uikit/timeline' },
+
+    ]},
+/*    {
         label: 'UI Components',
         items: [
             { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
@@ -136,6 +141,7 @@ const model = ref([
             }
         ]
     }
+  */
 ]);
 </script>
 
