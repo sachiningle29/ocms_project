@@ -1,8 +1,16 @@
+
+
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
+import { useRouter } from 'vue-router';
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+const router = useRouter();
+
+const logout = () => {
+    router.push('/auth/welcome');
+};
 </script>
 
 <template>
@@ -30,7 +38,7 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                     </g>
                 </svg>
 
-                <span>SAKAI</span>
+                <span>OCMS</span>
             </router-link>
         </div>
 
@@ -58,7 +66,7 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                 <i class="pi pi-ellipsis-v"></i>
             </button>
 
-            <div class="layout-topbar-menu hidden lg:block">
+       <!-- <div class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-calendar"></i>
@@ -74,6 +82,12 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                     </button>
                 </div>
             </div>
+            -->
+
+               <button class="layout-topbar-action" @click="logout">
+                    <i class="pi pi-sign-out"></i>
+                    <span class="ml-2">Logout</span>
+                </button>
         </div>
     </div>
 </template>
