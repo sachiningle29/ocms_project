@@ -4,12 +4,28 @@ import { createRouter, createWebHistory } from 'vue-router';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
+
+         {
+            path: '/auth/UserLogin',
+            name: 'UserLogin',
+            component: () => import('@/views/pages/auth/UserLogin.vue')
+        },
+        {
+            path: '/auth/AdminLogin',
+            name: 'AdminLogin',
+            component: () => import('@/views/pages/auth/AdminLogin.vue')
+        },
+        {
+            path: '/',
+            name: 'welcome',
+            component: () => import('@/views/pages/auth/Welcome.vue')
+        },
         {
             path: '/',
             component: AppLayout,
             children: [
                 {
-                    path: '/',
+                    path: '/welcome',
                     redirect: '/auth/welcome'
                 },
                 {
@@ -120,37 +136,14 @@ const router = createRouter({
                 }
             ]
         },
-        {
-            path: '/landing',
-            name: 'landing',
-            component: () => import('@/views/pages/Landing.vue')
-        },
+       
         {
             path: '/pages/notfound',
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
 
-        {
-            path: '/auth/UserLogin',
-            name: 'UserLogin',
-            component: () => import('@/views/pages/auth/UserLogin.vue')
-        },
-        {
-            path: '/auth/AdminLogin',
-            name: 'AdminLogin',
-            component: () => import('@/views/pages/auth/AdminLogin.vue')
-        },
-        {
-            path: '/auth/welcome',
-            name: 'welcome',
-            component: () => import('@/views/pages/auth/Welcome.vue')
-        },
-        {
-            path: '/auth/welcome',
-            name: 'welcome',
-            component: () => import('@/views/pages/auth/Welcome.vue')
-        },
+       
         {
             path: '/auth/access',
             name: 'accessDenied',

@@ -1,16 +1,42 @@
-
-
 <script setup>
-import { useLayout } from '@/layout/composables/layout';
-import AppConfigurator from './AppConfigurator.vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useLayout } from '@/layout/composables/layout';
+// import AppConfigurator from './AppConfigurator.vue'; // Uncomment if used in template
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
 const router = useRouter();
 
 const logout = () => {
-    router.push('/auth/welcome');
+    router.push('/');
 };
+
+const nestedMenuitems = ref([
+    {
+        label: 'User Type',
+        icon: 'pi pi-fw pi-user',
+        items: [
+            {
+                label: 'User Name',
+                icon: 'pi pi-fw pi-cog'
+            },
+            {
+                label: 'Email',
+                icon: 'pi pi-fw pi-envelope'
+            },
+
+            {
+                label: 'Rig Name',
+                icon: 'pi pi-fw pi-sitemap'
+            },
+            {
+                label: 'Logout',
+                icon: 'pi pi-fw pi-sign-out',
+                command: logout
+            }
+        ]
+    }
+]);
 </script>
 
 <template>
@@ -43,10 +69,12 @@ const logout = () => {
         </div>
 
         <div class="layout-topbar-actions">
+              <Menubar :model="nestedMenuitems" />
             <div class="layout-config-menu">
                 <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
                     <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
                 </button>
+              
                 <div class="relative">
                     <button
                         v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
@@ -56,6 +84,7 @@ const logout = () => {
                         <i class="pi pi-palette"></i>
                     </button>
                     <AppConfigurator />
+                    
                 </div>
             </div>
 
@@ -66,7 +95,7 @@ const logout = () => {
                 <i class="pi pi-ellipsis-v"></i>
             </button>
 
-       <!-- <div class="layout-topbar-menu hidden lg:block">
+            <!-- <div class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-calendar"></i>
@@ -84,10 +113,10 @@ const logout = () => {
             </div>
             -->
 
-               <button class="layout-topbar-action" @click="logout">
-                    <i class="pi pi-sign-out"></i>
-                    <span class="ml-2">Logout</span>
-                </button>
+            <!-- <button class="layout-topbar-action" @click="logout">
+                <i class="pi pi-sign-out"></i>
+                <span class="ml-2">Logout</span>
+            </button> -->
         </div>
     </div>
 </template>
