@@ -1,33 +1,20 @@
-import axios from "axios";
-import store from "./store";
-import router from "./router";
+import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: `${import.meta.env.VITE_API_BASE_URL}/api`,
+  baseURL: 'http://127.0.0.1:8000/api', // This is the key part
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
 });
 
-// Add Authorization header with token on every request
+// Add request interceptor for auth token if needed
 axiosClient.interceptors.request.use((config) => {
-  const token = store.state.user.token;
+  const token = sessionStorage.getItem('TOKEN');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
-
-// Handle response errors globally
-axiosClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response?.status === 401) {
-      // Clear token and redirect to login page on unauthorized
-      sessionStorage.removeItem("TOKEN");
-      router.push({ name: "UserLogin" }); // Make sure route name matches
-    }
-    return Promise.reject(error);
-  }
-);
 
 export default axiosClient;

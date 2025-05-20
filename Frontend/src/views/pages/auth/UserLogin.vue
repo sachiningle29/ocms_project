@@ -21,11 +21,38 @@ const user = ref({
   remember: false
 });
 
+function validate() {
+  let valid = true;
+  errors.value = { email: '', password: '' };
+
+  if (!user.value.email) {
+    errors.value.email = 'Email is required';
+    valid = false;
+  } else if (!/^\S+@\S+\.\S+$/.test(user.value.email)) {
+    errors.value.email = 'Please enter a valid email';
+    valid = false;
+  }
+
+  if (!user.value.password) {
+    errors.value.password = 'Password is required';
+    valid = false;
+  }
+
+  return valid;
+}
+
+const errors = ref({
+  email: '',
+  password: ''
+});
+
 function login() {
+  if (!validate()) return;
+  
   loading.value = true;
   errorMsg.value = "";
 
-  store.dispatch('login', user.value)
+  store.dispatch('Userlogin', user.value)
     .then(() => {
       loading.value = false;
       router.push({ name: 'Userdashboard' });
@@ -33,7 +60,7 @@ function login() {
     .catch(({ response }) => {
       loading.value = false;
       errorMsg.value = response?.data?.message || "Login failed.";
-      console.log(response?.data?.message);
+      console.log(errorMsg.value);
     });
 }
 </script>
