@@ -26,3 +26,11 @@ Route::middleware(['user'])->prefix('running-contracts')->group(function () {
     Route::delete('/delete/{id}', [RunningContractController::class, 'destroy']); // Delete contract
 });
 
+Route::middleware(['user'])->prefix('hiring-contracts')->group(function () {
+    Route::get('/list', [RunningContractController::class, 'index']);           // List all contracts
+    Route::post('/add', [RunningContractController::class, 'store']);           // Add new contract
+    Route::get('/view/{id}', [RunningContractController::class, 'show']);       // View single contract
+    Route::put('/edit/{id}', [RunningContractController::class, 'update']);     // Edit existing contract
+    Route::delete('/delete/{id}', [RunningContractController::class, 'destroy']); // Delete contract
+});
+

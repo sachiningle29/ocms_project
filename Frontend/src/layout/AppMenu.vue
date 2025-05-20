@@ -9,7 +9,7 @@ const model = ref([
         items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
                 // { label: 'Add Contract', icon: 'pi pi-fw pi-tablet', to: '' },
                 { label: 'Running Contract', icon: 'pi pi-fw pi-clone', to: '/user/runningcontracts' },
-                { label: 'Under Hiring Contract', icon: 'pi pi-fw pi-image', to: '' },
+                { label: 'Under Hiring Contract', icon: 'pi pi-fw pi-image', to: '/user/hiringcontracts' },
                 { label: 'Add Milestone', icon: 'pi pi-fw pi-calendar', to: '' },
 
         ]

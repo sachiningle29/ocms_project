@@ -138,6 +138,11 @@ const router = createRouter({
                     path: '/user/runningcontracts',
                     name: 'RunningContracts',
                     component: () => import('@/views/user/running_contract/RunningContract.vue')
+                },
+                {
+                    path: '/user/hiringcontracts',
+                    name: 'HiringContracts',
+                    component: () => import('@/views/user/hiring_contract/HiringContract.vue')
                 }
             ]
         },
