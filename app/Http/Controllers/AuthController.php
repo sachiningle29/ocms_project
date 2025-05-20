@@ -32,7 +32,7 @@ class AuthController extends Controller
 
        return response([
         'message' => 'You don\'t have permission to authenticate as admin'
-    ],483);
+    ],403);
 
     }
 
@@ -43,14 +43,10 @@ class AuthController extends Controller
         'token'=>$token
     ]);
 
- 
-
-
     }
 
     public function logout(){
         $user = Auth::user();
-
         $user->currentAccessToken()->delete();
         return response('',204);
 

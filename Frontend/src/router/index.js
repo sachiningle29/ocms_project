@@ -4,6 +4,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
+          {
+            path: '/',
+            name: 'welcome',
+            component: () => import('@/views/pages/auth/Welcome.vue')
+        },
         {
             path: '/auth/UserLogin',
             name: 'UserLogin',
@@ -14,16 +19,12 @@ const router = createRouter({
             name: 'AdminLogin',
             component: () => import('@/views/pages/auth/AdminLogin.vue')
         },
-        {
-            path: '/user/',
-            name: 'AdminLogin',
-            component: () => import('@/views/pages/auth/AdminLogin.vue')
-        },
+       
         {
             path: '/user/runningcontracts',
-            name: 'welcome',
             component: () => import('@/views/user/running_contract/RunningContract.vue')
         },
+       
         {
             path: '/',
             component: AppLayout,
