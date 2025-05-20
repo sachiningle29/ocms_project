@@ -7,7 +7,6 @@ const axiosClient = axios.create({
     'Content-Type': 'application/json'
   }
 });
-
 // Add request interceptor for auth token if needed
 axiosClient.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('TOKEN');
@@ -16,5 +15,4 @@ axiosClient.interceptors.request.use((config) => {
   }
   return config;
 });
-
 export default axiosClient;
