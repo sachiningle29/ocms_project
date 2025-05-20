@@ -128,7 +128,7 @@ function deleteSelectedContracts() {
 
             <template #header>
                 <div class="flex justify-between items-center">
-                    <h4 class="m-0">Running Contracts</h4>
+                    <h4 class="m-0">Hiring Contracts</h4>
                     <span class="p-input-icon-left">
                         <i class="pi pi-search" />
                         <InputText v-model="filters['global'].value" placeholder="Search..." />
