@@ -12,7 +12,33 @@ const contractDialog = ref(false);
 const deleteContractDialog = ref(false);
 const deleteContractsDialog = ref(false);
 
-const contract = ref({});
+const contract = ref({
+    rid: '',
+    contractor_name: '',
+    work_order_number: '',
+    contract_type: '',
+    department: '',
+    section: '',
+    status: '',
+    title: '',
+    case_type: '',
+    pr_no: '',
+    dealing_officer: '',
+    value_usd: null,
+    value_inr: null,
+    contract_start_date: '',
+    contract_end_date: '',
+    funds_utilised: null,
+    remarks: '',
+    trigger: '',
+    original_date_of_delivery: '',
+    no_of_extensions: null,
+    extended_po_lc_last_date_of_shipment: '',
+    ec_and_sims_status: '',
+    post_contract_issues_in_brief: '',
+    current_status: ''
+});
+
 const selectedContracts = ref();
 const submitted = ref(false);
 
@@ -138,14 +164,33 @@ function deleteSelectedContracts() {
 
             <Column selectionMode="multiple" style="width: 3rem" :exportable="false" />
             <Column header="Sr No" :body="(_, { index }) => index + 1" style="width: 4rem" />
-            <Column field="contractor_name" header="Contractor Name" sortable />
+
             <Column field="rid" header="Contract ID" sortable />
+            <Column field="title" header="Title" sortable />
+            <Column field="contractor_name" header="Contractor Name" sortable />
+            <Column field="pr_no" header="PR No" sortable />
             <Column field="work_order_number" header="Work Order Number" sortable />
             <Column field="contract_type" header="Contract Type" sortable />
+            <Column field="case_type" header="Case Type" sortable />
             <Column field="department" header="Department" sortable />
             <Column field="section" header="Section" sortable />
+            <Column field="dealing_officer" header="Dealing Officer" sortable />
+            <Column field="value_usd" header="Value (USD)" sortable />
+            <Column field="value_inr" header="Value (INR)" sortable />
+            <Column field="contract_start_date" header="Start Date" sortable />
+            <Column field="contract_end_date" header="End Date" sortable />
+            <Column field="original_date_of_delivery" header="Original Delivery Date" sortable />
+            <Column field="no_of_extensions" header="Extensions" sortable />
+            <Column field="extended_po_lc_last_date_of_shipment" header="Extended PO/LC Date" sortable />
+            <Column field="ec_and_sims_status" header="EC & SIMS Status" sortable />
+            <Column field="post_contract_issues_in_brief" header="Post-Contract Issues" sortable />
+            <Column field="funds_utilised" header="Funds Utilised" sortable />
+            <Column field="remarks" header="Remarks" sortable />
+            <Column field="trigger" header="Trigger" sortable />
+            <Column field="current_status" header="Current Status" sortable />
             <Column field="status" header="Status" sortable />
-            <Column field="created_at" header="Date" sortable />
+            <Column field="created_at" header="Created At" sortable />
+
 
             <Column :exportable="false" header="Actions" style="width: 10rem">
                 <template #body="slotProps">
@@ -160,53 +205,113 @@ function deleteSelectedContracts() {
             </template>
         </DataTable>
 
-        <Dialog v-model:visible="contractDialog" modal header="Contract Details" :style="{ width: '600px' }">
-            <div class="flex flex-col gap-4">
-                <div>
-                    <label class="block font-bold mb-2">Contract ID (RID)</label>
-                    <InputText v-model="contract.rid" class="w-full" />
-                </div>
-
-                <div>
-                    <label class="block font-bold mb-2">Vendor / Contractor Name</label>
-                    <InputText v-model="contract.contractor_name" class="w-full" required
-                        :invalid="submitted && !contract.contractor_name" />
-                    <small v-if="submitted && !contract.contractor_name" class="text-red-500">Contractor Name is
-                        required.</small>
-                </div>
-
-                <div>
-                    <label class="block font-bold mb-2">Work Order Number</label>
-                    <InputText v-model="contract.work_order_number" class="w-full" />
-                </div>
-
-                <div>
-                    <label class="block font-bold mb-2">Contract Type</label>
-                    <InputText v-model="contract.contract_type" class="w-full" />
-                </div>
-
-                <div>
-                    <label class="block font-bold mb-2">Department</label>
-                    <InputText v-model="contract.department" class="w-full" />
-                </div>
-
-                <div>
-                    <label class="block font-bold mb-2">Section</label>
-                    <InputText v-model="contract.section" class="w-full" />
-                </div>
-
-                <div>
-                    <label class="block font-bold mb-2">Status</label>
-                    <Dropdown v-model="contract.status" :options="statusOptions" optionLabel="label" optionValue="value"
-                        placeholder="Select Status" class="w-full" />
+        <Dialog v-model:visible="contractDialog" modal header="Contract Details" :closable="true" style="width: 90vw">
+            <div class="p-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="font-bold mb-1 block">RID</label>
+                        <InputText v-model="contract.rid" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Vendor Name</label>
+                        <InputText v-model="contract.contractor_name" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Work Order Number</label>
+                        <InputText v-model="contract.work_order_number" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Contract Type</label>
+                        <Dropdown v-model="contract.contract_type" :options="contractTypes" optionLabel="label"
+                            placeholder="Select Type" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Department</label>
+                        <InputText v-model="contract.department" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Section</label>
+                        <Dropdown v-model="contract.section" :options="sections" optionLabel="label"
+                            placeholder="Select Section" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Title</label>
+                        <InputText v-model="contract.title" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Case Type</label>
+                        <InputText v-model="contract.case_type" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">PR No</label>
+                        <InputText v-model="contract.pr_no" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Dealing Officer</label>
+                        <InputText v-model="contract.dealing_officer" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Value (USD)</label>
+                        <InputNumber v-model="contract.value_usd" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Value (INR)</label>
+                        <InputNumber v-model="contract.value_inr" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Contract Start Date</label>
+                        <Calendar v-model="contract.contract_start_date" class="w-full" dateFormat="yy-mm-dd" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Contract End Date</label>
+                        <Calendar v-model="contract.contract_end_date" class="w-full" dateFormat="yy-mm-dd" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Funds Utilised</label>
+                        <InputNumber v-model="contract.funds_utilised" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Remarks</label>
+                        <Textarea v-model="contract.remarks" class="w-full" rows="3" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Trigger</label>
+                        <InputText v-model="contract.trigger" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Original Date of Delivery</label>
+                        <Calendar v-model="contract.original_date_of_delivery" class="w-full" dateFormat="yy-mm-dd" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">No. of Extensions</label>
+                        <InputNumber v-model="contract.no_of_extensions" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Extended PO/LC Last Shipment</label>
+                        <Calendar v-model="contract.extended_po_lc_last_date_of_shipment" class="w-full"
+                            dateFormat="yy-mm-dd" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">EC and SIMS Status</label>
+                        <InputText v-model="contract.ec_and_sims_status" class="w-full" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Post Contract Issues (Brief)</label>
+                        <Textarea v-model="contract.post_contract_issues_in_brief" class="w-full" rows="3" />
+                    </div>
+                    <div>
+                        <label class="font-bold mb-1 block">Current Status</label>
+                        <InputText v-model="contract.current_status" class="w-full" />
+                    </div>
                 </div>
             </div>
 
             <template #footer>
-                <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
-                <Button label="Save" icon="pi pi-check" @click="saveContract" />
+                <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+                <Button label="Save" icon="pi pi-check" class="p-button-primary" @click="saveContract" />
             </template>
         </Dialog>
+
 
         <Dialog v-model:visible="deleteContractDialog" modal header="Confirm" :style="{ width: '450px' }">
             <div class="confirmation-content">
