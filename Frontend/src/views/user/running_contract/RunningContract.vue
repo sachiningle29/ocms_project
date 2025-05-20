@@ -1,8 +1,8 @@
 <script setup>
-import { ProductService } from '@/service/ProductService';
-import { FilterMatchMode } from '@primevue/core/api';
-import { useToast } from 'primevue/usetoast';
+import axios from 'axios';
 import { onMounted, ref } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import { FilterMatchMode } from '@primevue/core/api';
 
 const toast = useToast();
 const dt = ref();
@@ -26,9 +26,22 @@ const statusOptions = ref([
     { label: 'Terminated', value: 'terminated' }
 ]);
 
+const apiBase = '/api/running-contracts';
+
 onMounted(() => {
-    contracts.value = []; // Replace with API data if needed
+    loadContracts();
 });
+
+function loadContracts() {
+    axios.get(`${apiBase}/list`, { headers: { 'Cache-Control': 'no-cache' } }).then(response => {
+        console.log('Contracts response:', response.data);
+        // Filter out empty rows or ones without an ID
+        contracts.value = (response.data || []).filter(c => c && c.id);
+    }).catch(() => {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load contracts', life: 3000 });
+    });
+}
+
 
 function openNew() {
     contract.value = {};
@@ -43,24 +56,28 @@ function hideDialog() {
 
 function saveContract() {
     submitted.value = true;
-    if (contract?.value.contractor_name?.trim()) {
+    if (contract.value.contractor_name?.trim()) {
         if (contract.value.id) {
-            contracts.value[findIndexById(contract.value.id)] = contract.value;
-            toast.add({ severity: 'success', summary: 'Updated', detail: 'Contract updated', life: 3000 });
+            axios.put(`${apiBase}/edit/${contract.value.id}`, contract.value).then(() => {
+                toast.add({ severity: 'success', summary: 'Updated', detail: 'Contract updated', life: 3000 });
+                loadContracts();
+                contractDialog.value = false;
+            });
         } else {
-            contract.value.id = createId();
-            contract.value.created_at = new Date().toISOString().slice(0, 10);
-            contracts.value.push(contract.value);
-            toast.add({ severity: 'success', summary: 'Created', detail: 'Contract created', life: 3000 });
+            axios.post(`${apiBase}/add`, contract.value).then(() => {
+                toast.add({ severity: 'success', summary: 'Created', detail: 'Contract created', life: 3000 });
+                loadContracts();
+                contractDialog.value = false;
+            });
         }
-        contractDialog.value = false;
-        contract.value = {};
     }
 }
 
 function editContract(c) {
-    contract.value = { ...c };
-    contractDialog.value = true;
+    axios.get(`${apiBase}/view/${c.id}`).then(response => {
+        contract.value = response.data;
+        contractDialog.value = true;
+    });
 }
 
 function confirmDeleteContract(c) {
@@ -69,10 +86,12 @@ function confirmDeleteContract(c) {
 }
 
 function deleteContract() {
-    contracts.value = contracts.value.filter(c => c.id !== contract.value.id);
-    toast.add({ severity: 'success', summary: 'Deleted', detail: 'Contract deleted', life: 3000 });
-    deleteContractDialog.value = false;
-    contract.value = {};
+    axios.delete(`${apiBase}/delete/${contract.value.id}`).then(() => {
+        toast.add({ severity: 'success', summary: 'Deleted', detail: 'Contract deleted', life: 3000 });
+        deleteContractDialog.value = false;
+        contract.value = {};
+        loadContracts();
+    });
 }
 
 function confirmDeleteSelected() {
@@ -80,18 +99,15 @@ function confirmDeleteSelected() {
 }
 
 function deleteSelectedContracts() {
-    contracts.value = contracts.value.filter(c => !selectedContracts.value.includes(c));
-    toast.add({ severity: 'success', summary: 'Deleted', detail: 'Selected contracts deleted', life: 3000 });
-    deleteContractsDialog.value = false;
-    selectedContracts.value = null;
-}
-
-function findIndexById(id) {
-    return contracts.value.findIndex(c => c.id === id);
-}
-
-function createId() {
-    return Math.random().toString(36).substring(2, 9);
+    const deletePromises = selectedContracts.value.map(c =>
+        axios.delete(`${apiBase}/delete/${c.id}`)
+    );
+    Promise.all(deletePromises).then(() => {
+        toast.add({ severity: 'success', summary: 'Deleted', detail: 'Selected contracts deleted', life: 3000 });
+        deleteContractsDialog.value = false;
+        selectedContracts.value = null;
+        loadContracts();
+    });
 }
 </script>
 
@@ -100,21 +116,16 @@ function createId() {
         <Toolbar class="mb-4">
             <template #start>
                 <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-                <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected" :disabled="!selectedContracts || !selectedContracts.length" />
+                <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected"
+                    :disabled="!selectedContracts || !selectedContracts.length" />
             </template>
         </Toolbar>
 
-        <DataTable
-            ref="dt"
-            v-model:selection="selectedContracts"
-            :value="contracts"
-            dataKey="id"
-            :paginator="true"
-            :rows="10"
-            :filters="filters"
-            :rowsPerPageOptions="[5, 10, 25]"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} contracts"
-        >
+        <DataTable ref="dt" v-model:selection="selectedContracts" :value="contracts.filter(c => c && c.id)" dataKey="id"
+            :paginator="true" :rows="10" :filters="filters" :rowsPerPageOptions="[5, 10, 25]"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} contracts">
+
+
             <template #header>
                 <div class="flex justify-between items-center">
                     <h4 class="m-0">Running Contracts</h4>
@@ -126,18 +137,27 @@ function createId() {
             </template>
 
             <Column selectionMode="multiple" style="width: 3rem" :exportable="false" />
-            <Column header="Sr No" body="slotProps => slotProps.index + 1" style="width: 4rem" />
+            <Column header="Sr No" :body="(_, { index }) => index + 1" style="width: 4rem" />
             <Column field="contractor_name" header="Contractor Name" sortable />
             <Column field="rid" header="Contract ID" sortable />
+            <Column field="work_order_number" header="Work Order Number" sortable />
+            <Column field="contract_type" header="Contract Type" sortable />
+            <Column field="department" header="Department" sortable />
+            <Column field="section" header="Section" sortable />
             <Column field="status" header="Status" sortable />
             <Column field="created_at" header="Date" sortable />
 
             <Column :exportable="false" header="Actions" style="width: 10rem">
                 <template #body="slotProps">
                     <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editContract(slotProps.data)" />
-                    <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteContract(slotProps.data)" />
+                    <Button icon="pi pi-trash" outlined rounded severity="danger"
+                        @click="confirmDeleteContract(slotProps.data)" />
                 </template>
             </Column>
+
+            <template #empty>
+                <div class="text-center text-gray-500 py-4">No contracts found.</div>
+            </template>
         </DataTable>
 
         <Dialog v-model:visible="contractDialog" modal header="Contract Details" :style="{ width: '600px' }">
@@ -149,8 +169,10 @@ function createId() {
 
                 <div>
                     <label class="block font-bold mb-2">Vendor / Contractor Name</label>
-                    <InputText v-model="contract.contractor_name" class="w-full" required :invalid="submitted && !contract.contractor_name" />
-                    <small v-if="submitted && !contract.contractor_name" class="text-red-500">Contractor Name is required.</small>
+                    <InputText v-model="contract.contractor_name" class="w-full" required
+                        :invalid="submitted && !contract.contractor_name" />
+                    <small v-if="submitted && !contract.contractor_name" class="text-red-500">Contractor Name is
+                        required.</small>
                 </div>
 
                 <div>
@@ -175,7 +197,8 @@ function createId() {
 
                 <div>
                     <label class="block font-bold mb-2">Status</label>
-                    <Dropdown v-model="contract.status" :options="statusOptions" optionLabel="label" placeholder="Select Status" class="w-full" />
+                    <Dropdown v-model="contract.status" :options="statusOptions" optionLabel="label" optionValue="value"
+                        placeholder="Select Status" class="w-full" />
                 </div>
             </div>
 
