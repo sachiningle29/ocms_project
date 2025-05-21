@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\User\RunningContractController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::apiResource('items', ItemController::class);
+
 // Public routes
 Route::post('/login/admin', [AuthController::class, 'Adminlogin']);
 Route::post('/login/user', [AuthController::class, 'Userlogin']);
@@ -22,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('admin')->group(function () {
     });
 });
+
 
 // Running Contracts
 Route::prefix('running-contracts')->group(function () {

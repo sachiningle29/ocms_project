@@ -1,8 +1,10 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import store from './store'; // ✅ Add this line
+import store from './store';
+import axios from 'axios'
 
+axios.defaults.baseURL = 'http://127.0.0.1:8000'
 import Aura from '@primeuix/themes/aura';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
@@ -13,7 +15,7 @@ import '@/assets/styles.scss';
 const app = createApp(App);
 
 app.use(router);
-app.use(store); // ✅ Register the Vuex store
+app.use(store); // 
 app.use(PrimeVue, {
     theme: {
         preset: Aura,
