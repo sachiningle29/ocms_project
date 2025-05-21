@@ -12,28 +12,16 @@ class AdminUserSeeder extends Seeder
     {
         $admins = [
             [
-                'name' => 'Super Admin',
-                'email' => 'superadmin@example.com',
-                'password' => 'Super@dmin123',
-                'is_admin' => false
-            ],
-            [
-                'name' => 'System Admin',
-                'email' => 'sysadmin@example.com',
-                'password' => 'Sys@dmin456',
-                'is_admin' => true
-            ],
-            [
                 'name' => 'Operations Admin',
-                'email' => 'opsadmin@example.com',
-                'password' => '0ps@dmin789',
+                'email' => 'admin@gmail.com',
+                'password' => 'admin',
                 'is_admin' => true
             ],
             // Original admin remains
             [
-                'name' => 'Admin',
-                'email' => 'admin@example.com',
-                'password' => 'admin123',
+                'name' => 'test',
+                'email' => 'test@gmail.com',
+                'password' => 'test123',
                 'is_admin' => false
             ]
         ];
@@ -44,7 +32,7 @@ class AdminUserSeeder extends Seeder
                 'email' => $admin['email'],
                 'email_verified_at' => now(),
                 'password' => Hash::make($admin['password']),
-                'is_admin' => true
+                'is_admin' => $admin['is_admin'],
             ]);
         }
     }

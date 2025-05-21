@@ -15,12 +15,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Regular test user with complete fields
-        User::factory()->create([
+   /*     User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
             'email_verified_at' => now(),
             'password' => bcrypt('user123'), 
             'is_admin' => false
         ]);
+    */
     }
 }
