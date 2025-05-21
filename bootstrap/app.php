@@ -32,6 +32,15 @@ return Application::configure(basePath: dirname(__DIR__))
             VerifyCsrfToken::class,
             SubstituteBindings::class,
         ]);
+
+        $middleware->group('web', [
+            // Web middleware stack
+        ]);
+        
+        // Exclude API routes from CSRF protection
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
