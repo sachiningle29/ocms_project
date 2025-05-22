@@ -20,7 +20,7 @@ const model = computed(() => {
             {
                 items: [
                     { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: dashboardPath.value },
-                    { label: 'User', icon: 'pi pi-fw pi-clone' },
+                    { label: 'User', icon: 'pi pi-fw pi-user', to:{name:'addUser'}  },
                     {
                         label: 'Section',
                         icon: 'pi pi-fw pi-image',

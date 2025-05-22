@@ -39,7 +39,7 @@ const logout = () => {
 
 const nestedMenuitems = ref([
     {
-        label: 'User Type ' + userType.value,
+        label: 'User Type ' + "("+userType.value+')',
         icon: 'pi pi-fw pi-user',
         items: [
             {
