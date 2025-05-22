@@ -84,22 +84,63 @@ function hideDialog() {
 function saveUser() {
     submitted.value = true;
 
-    if (user.name?.trim() && user.email?.trim() && (user.is_admin === 0 || user.is_admin === 1)) {
-
-        const request = user.id ? axiosClient.put(`${apiBase}/${user.id}`, user) : axiosClient.post(apiBase, user);
-
-        request
-            .then(() => {
-                toast.add({ severity: 'success', summary: 'Success', detail: user.id ? 'User updated' : 'User created', life: 3000 });
-                loadUsers();
-                userDialog.value = false;
-            })
-            .catch((error) => {
-                console.error('saveUser error:', error.response?.data || error.message);
-                toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save user', life: 3000 });
-            });
+    // Name validation
+    if (!user.name?.trim()) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'Name is required', life: 3000 });
+        return;
     }
+
+    // Email validation
+    if (!user.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'A valid email is required', life: 3000 });
+        return;
+    }
+
+    // Password validation
+    if (!user.id && !user.password?.trim()) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'Password is required', life: 3000 });
+        return;
+    }
+
+    // is_admin validation
+    if (![0, 1].includes(user.is_admin)) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'User type must be selected', life: 3000 });
+        return;
+    }
+
+    // user_status validation
+    if (!['active', 'inactive'].includes(user.user_status)) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'User status must be selected', life: 3000 });
+        return;
+    }
+
+    // Prepare payload
+    const payload = { ...user };
+    if (user.id && !user.password?.trim()) {
+        delete payload.password; 
+    }
+
+    const request = user.id
+        ? axiosClient.put(`/users/${user.id}`, payload)
+        : axiosClient.post('/users', payload);
+
+    request
+        .then(() => {
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: user.id ? 'User updated successfully' : 'User created successfully',
+                life: 3000
+            });
+            loadUsers();
+            userDialog.value = false;
+        })
+        .catch((error) => {
+            console.error('saveUser error:', error.response?.data || error.message);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save user', life: 3000 });
+        });
 }
+
 
 function editUser(u) {
     axiosClient
@@ -151,6 +192,8 @@ function deleteSelectedUsers() {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete selected users', life: 3000 });
         });
 }
+
+
 </script>
 
 <template>
