@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from '@primevue/core/api';
 
-console.log(axios);
+// console.log(axios);
 
 const toast = useToast();
 const dt = ref();
