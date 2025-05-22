@@ -1,5 +1,5 @@
 <script setup>
-import axios from 'axios';
+import axiosClient from '@/axios';
 import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from '@primevue/core/api';
@@ -61,7 +61,7 @@ onMounted(() => {
 });
 
 function loadContracts() {
-    axios.get(`${apiBase}/list`, { headers: { 'Cache-Control': 'no-cache' } }).then(response => {
+    axiosClient.get(`${apiBase}/list`, { headers: { 'Cache-Control': 'no-cache' } }).then(response => {
         console.log('Contracts response:', response.data);
         // Filter out empty rows or ones without an ID
         contracts.value = (response.data || []).filter(c => c && c.id);
@@ -86,13 +86,13 @@ function saveContract() {
     submitted.value = true;
     if (contract.value.contractor_name?.trim()) {
         if (contract.value.id) {
-            axios.put(`${apiBase}/edit/${contract.value.id}`, contract.value).then(() => {
+            axiosClient.put(`${apiBase}/edit/${contract.value.id}`, contract.value).then(() => {
                 toast.add({ severity: 'success', summary: 'Updated', detail: 'Contract updated', life: 3000 });
                 loadContracts();
                 contractDialog.value = false;
             });
         } else {
-            axios.post(`${apiBase}/add`, contract.value).then(() => {
+            axiosClient.post(`${apiBase}/add`, contract.value).then(() => {
                 toast.add({ severity: 'success', summary: 'Created', detail: 'Contract created', life: 3000 });
                 loadContracts();
                 contractDialog.value = false;
@@ -102,7 +102,7 @@ function saveContract() {
 }
 
 function editContract(c) {
-    axios.get(`${apiBase}/view/${c.id}`).then(response => {
+    axiosClient.get(`${apiBase}/view/${c.id}`).then(response => {
         contract.value = response.data;
         contractDialog.value = true;
     });
@@ -114,7 +114,7 @@ function confirmDeleteContract(c) {
 }
 
 function deleteContract() {
-    axios.delete(`${apiBase}/delete/${contract.value.id}`).then(() => {
+    axiosClient.delete(`${apiBase}/delete/${contract.value.id}`).then(() => {
         toast.add({ severity: 'success', summary: 'Deleted', detail: 'Contract deleted', life: 3000 });
         deleteContractDialog.value = false;
         contract.value = {};
@@ -128,7 +128,7 @@ function confirmDeleteSelected() {
 
 function deleteSelectedContracts() {
     const deletePromises = selectedContracts.value.map(c =>
-        axios.delete(`${apiBase}/delete/${c.id}`)
+        axiosClient.delete(`${apiBase}/delete/${c.id}`)
     );
     Promise.all(deletePromises).then(() => {
         toast.add({ severity: 'success', summary: 'Deleted', detail: 'Selected contracts deleted', life: 3000 });
