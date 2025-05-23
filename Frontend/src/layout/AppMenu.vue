@@ -5,33 +5,29 @@ import AppMenuItem from './AppMenuItem.vue';
 
 const route = useRoute();
 
-// Dynamically determine the dashboard path
 const dashboardPath = computed(() => {
     if (route.path.startsWith('/admin')) {
         return '/admin/dashboard';
     } else if (route.path.startsWith('/user')) {
         return '/user/dashboard';
     }
-    return '/'; // fallback
+    return '/';
 });
+
 const model = computed(() => {
     if (route.path.startsWith('/admin')) {
         return [
             {
                 items: [
                     { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: dashboardPath.value },
-                    { label: 'User', icon: 'pi pi-fw pi-user', to:{name:'addUser'}  },
-                    { label: 'Section', icon: 'pi pi-fw pi-image', to:{name:'section'} },
-                    { label: 'Sub Section', icon: 'pi pi-fw pi-clone',to:{name:'subsection'} },
-                   
-                  /*  {
-                        label: 'Section',
-                        icon: 'pi pi-fw pi-image',
+                    { label: 'User', icon: 'pi pi-fw pi-user', to: { name: 'addUser' } },
+                    {
+                        label: 'Master Section', icon: 'pi pi-fw pi-cog',
                         items: [
-                            { label: 'Sub Section 1', icon: 'pi pi-fw pi-angle-right' }
+                            { label: 'Section', icon: 'pi pi-fw pi-image', to: { name: 'section' } },
+                            { label: 'Sub-Section', icon: 'pi pi-fw pi-clone', to: { name: 'subsection' } }
                         ]
                     }
-                */
                 ]
             }
         ];
@@ -49,13 +45,12 @@ const model = computed(() => {
     }
     return [];
 });
-
 </script>
 
 <template>
     <ul class="layout-menu">
-        <template v-for="(item, i) in model" :key="item">
-            <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
+        <template v-for="(item, i) in model" :key="i">
+            <app-menu-item v-if="!item.separator" :item="item" :index="i" />
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
     </ul>

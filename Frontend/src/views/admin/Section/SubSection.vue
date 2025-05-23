@@ -1,5 +1,5 @@
 <script setup>
-import axiosClient from '@/axios'; // Use the custom Axios client
+import axiosClient from '@/axios';
 import { onMounted, ref, reactive } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from '@primevue/core/api';
@@ -9,8 +9,8 @@ const dt = ref();
 
 const subSections = ref([]);
 const subSectionDialog = ref(false);
-const deletesubSectionDialog = ref(false);
-const deletesubSectionsDialog = ref(false);
+const deleteSubSectionDialog = ref(false);
+const deleteSubSectionsDialog = ref(false);
 
 const subSection = reactive({
     id: null,
@@ -30,12 +30,11 @@ onMounted(() => {
     loadSubSections();
 });
 
-
 function loadSubSections() {
     axiosClient
         .get(apiBase)
         .then((response) => {
-          subSections.value = response.data || [];
+            subSections.value = response.data || [];
         })
         .catch((error) => {
             console.error('loadSubSections error:', error.response?.data || error.message);
@@ -44,11 +43,8 @@ function loadSubSections() {
 }
 
 function openNew() {
-    Object.assign(subSection, {
-        id: null,
-        name: ''
-    });
-   submitted.value = false;
+    Object.assign(subSection, { id: null, name: '' });
+    submitted.value = false;
     subSectionDialog.value = true;
 }
 
@@ -57,23 +53,19 @@ function hideDialog() {
     submitted.value = false;
 }
 
-
 function saveSubSection() {
     submitted.value = true;
 
-    // Name validation
     if (!subSection.name?.trim()) {
         toast.add({ severity: 'warn', summary: 'Validation', detail: 'Name is required', life: 3000 });
         return;
     }
 
-    // Prepare payload
     const payload = { ...subSection };
-    if (subSection.id && !subSection.password?.trim()) {
-        delete payload.password; 
-    }
 
-    const request = subSection.id ? axiosClient.put(`/subSections/${subSection.id}`, payload) : axiosClient.post('/subSections', payload);
+    const request = subSection.id
+        ? axiosClient.put(`${apiBase}/${subSection.id}`, payload)
+        : axiosClient.post(apiBase, payload);
 
     request
         .then(() => {
@@ -92,13 +84,12 @@ function saveSubSection() {
         });
 }
 
-
 function editSubSection(u) {
     axiosClient
         .get(`${apiBase}/${u.id}`)
         .then((response) => {
             Object.assign(subSection, response.data);
-            loadSubSectionsDialog.value = true;
+            subSectionDialog.value = true;
         })
         .catch((error) => {
             console.error('editSubSection error:', error.response?.data || error.message);
@@ -116,7 +107,7 @@ function deleteSubSection() {
         .delete(`${apiBase}/${subSection.id}`)
         .then(() => {
             toast.add({ severity: 'success', summary: 'Deleted', detail: 'Sub Section deleted', life: 3000 });
-            deletesubSectionDialog.value = false;
+            deleteSubSectionDialog.value = false;
             loadSubSections();
         })
         .catch((error) => {
@@ -130,7 +121,9 @@ function confirmDeleteSelected() {
 }
 
 function deleteSelectedSubSections() {
-    const deletePromises = selectedSubSections.value.map((u) => axiosClient.delete(`${apiBase}/${u.id}`));
+    const deletePromises = selectedSubSections.value.map((u) =>
+        axiosClient.delete(`${apiBase}/${u.id}`)
+    );
     Promise.all(deletePromises)
         .then(() => {
             toast.add({ severity: 'success', summary: 'Deleted', detail: 'Selected subSections deleted', life: 3000 });
@@ -144,7 +137,29 @@ function deleteSelectedSubSections() {
         });
 }
 
+const sections = ref([]); // Holds all section options
+const selectedSection = ref(null); // Selected section ID
 
+const subSectionInputs = ref([{ name: '' }]); // Holds multiple sub-section names
+
+// Fetch sections from backend (assuming GET /sections returns array of { id, section_name })
+onMounted(() => {
+    axiosClient.get('/sections')
+        .then(res => {
+            sections.value = res.data || [];
+        })
+        .catch(err => {
+            console.error('Failed to fetch sections:', err.response?.data || err.message);
+        });
+});
+
+function addSubSection() {
+    subSectionInputs.value.push({ name: '' });
+}
+
+function removeSubSection(index) {
+    subSectionInputs.value.splice(index, 1);
+}
 </script>
 
 <template>
@@ -152,12 +167,21 @@ function deleteSelectedSubSections() {
         <Toolbar class="mb-4">
             <template #start>
                 <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-                <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected" :disabled="!selectedsubSections || !selectedsubSections.length" />
-           
-        </template>
+                <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected" :disabled="!selectedSubSections || !selectedSubSections.length" />
+            </template>
         </Toolbar>
 
-        <DataTable ref="dt" v-model:selection="selectedSubSections" :value="subSections" dataKey="id" :paginator="true" :rows="10" :filters="filters" :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subSections">
+        <DataTable
+            ref="dt"
+            v-model:selection="selectedSubSections"
+            :value="subSections"
+            dataKey="id"
+            :paginator="true"
+            :rows="10"
+            :filters="filters"
+            :rowsPerPageOptions="[5, 10, 25]"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subSections"
+        >
             <template #header>
                 <div class="flex justify-between items-center">
                     <h4 class="m-0">Sub Section Management</h4>
@@ -174,7 +198,7 @@ function deleteSelectedSubSections() {
                     {{ slotProps.index + 1 }}
                 </template>
             </Column>
-            <Column field="sub_section_name" header="Section Name" sortable />
+            <Column field="name" header="Section Name" sortable />
             <Column :exportable="false" header="Actions" style="width: 10rem">
                 <template #body="slotProps">
                     <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editSubSection(slotProps.data)" />
@@ -186,33 +210,38 @@ function deleteSelectedSubSections() {
                 <div class="text-center text-gray-500 py-4">No sub section found.</div>
             </template>
         </DataTable>
-    
 
         <!-- Create/Edit Dialog -->
-        <Dialog v-model:visible="subSectionDialog" :draggable="false" modal header="Sub Section Details" :closable="false" style="width: 40vw">
-            <div class="p-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="font-bold mb-1 block">Sub Section Name</label>
-                        <InputText v-model="subSection.name" class="w-full" />
-                    </div>
-                </div>
+      <Dialog v-model:visible="subSectionDialog" :draggable="false" modal header="Sub Section Details" :closable="false" style="width: 40vw">
+    <div class="p-4">
+        <!-- Section Dropdown -->
+        <div class="mb-4">
+            <label class="font-bold mb-1 block">Select Section</label>
+            <Dropdown v-model="selectedSection" :options="sections" optionLabel="section_name" optionValue="id" placeholder="Select Section" class="w-full" />
+        </div>
+
+        <!-- Dynamic Sub Section Inputs -->
+        <div class="space-y-3">
+            <div v-for="(sub, index) in subSectionInputs" :key="index" class="flex items-center gap-2">
+                <InputText v-model="sub.name" placeholder="Sub Section Name" class="flex-1" />
+                <Button icon="pi pi-trash" severity="danger" outlined @click="removeSubSection(index)" v-if="subSectionInputs.length > 1" />
             </div>
+            <Button icon="pi pi-plus" label="Add Sub Section" outlined class="mt-2" @click="addSubSection" />
+        </div>
+    </div>
 
-            <template #footer>
-                <Button label="Close" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                <Button label="Save" icon="pi pi-check" class="p-button-primary" @click="saveSubSection" />
-            </template>
-        </Dialog>
+    <template #footer>
+        <Button label="Close" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+        <Button label="Save" icon="pi pi-check" class="p-button-primary" @click="saveSubSection" />
+    </template>
+</Dialog>
 
-        <!-- Delete One -->
-     <Dialog v-model:visible="deleteSubSectionDialog" modal header="Confirm" :style="{ width: '450px' }">
+
+        <!-- Delete One Dialog -->
+        <Dialog v-model:visible="deleteSubSectionDialog" modal header="Confirm" :style="{ width: '450px' }">
             <div class="confirmation-content">
                 <i class="pi pi-exclamation-triangle mr-3 text-red-500" style="font-size: 2rem" />
-                <span
-                    >Are you sure you want to delete <b>{{ subSection.name }}</b
-                    >?</span
-                >
+                <span>Are you sure you want to delete <b>{{ subSection.name }}</b>?</span>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" text @click="deleteSubSectionDialog = false" />
@@ -220,8 +249,8 @@ function deleteSelectedSubSections() {
             </template>
         </Dialog>
 
-        <!-- Delete Multiple -->
-       <Dialog v-model:visible="deleteSubSectionsDialog" modal header="Confirm" :style="{ width: '450px' }">
+        <!-- Delete Multiple Dialog -->
+        <Dialog v-model:visible="deleteSubSectionsDialog" modal header="Confirm" :style="{ width: '450px' }">
             <div class="confirmation-content">
                 <i class="pi pi-exclamation-triangle mr-3 text-red-500" style="font-size: 2rem" />
                 <span>Are you sure you want to delete the selected subSections?</span>
@@ -231,7 +260,6 @@ function deleteSelectedSubSections() {
                 <Button label="Yes" icon="pi pi-check" severity="danger" @click="deleteSelectedSubSections" />
             </template>
         </Dialog>
-   
     </div>
 </template>
 

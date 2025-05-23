@@ -54,9 +54,9 @@ const router = createRouter({
                     component: () => import('@/views/admin/Section/Section.vue')
                 },
                 {
-                    path: '/admin/subsection',
+                    path: '/admin/SubSection',
                     name: 'subsection',
-                    component: () => import('@/views/admin/SubSection/SubSection.vue')
+                    component: () => import('@/views/admin/Section/SubSection.vue')
                 },
 
                 

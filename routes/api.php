@@ -13,15 +13,18 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::post('/login', [AuthController::class, 'login']);
+
+
+Route::post('/login/admin', [AuthController::class, 'Adminlogin']);
+Route::post('/login/user', [AuthController::class, 'Userlogin']);
+
 Route::apiResource('items', ItemController::class);
 Route::apiResource('users', UserController::class);
 Route::apiResource('sections', SectionController::class);
 Route::apiResource('subSections', SubSectionController::class);
 
 // Public routes
-Route::post('/login/admin', [AuthController::class, 'Adminlogin']);
-Route::post('/login/user', [AuthController::class, 'Userlogin']);
+
 
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -36,6 +39,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Running Contracts
 Route::apiResource('running-contracts', RunningContractController::class);
-
 Route::apiResource('hiring-contracts', HiringContractController::class);
 
