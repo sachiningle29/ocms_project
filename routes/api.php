@@ -11,7 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
-
+Route::post('/login/admin', [AuthController::class, 'Adminlogin']);
+Route::post('/login/user', [AuthController::class, 'Userlogin']);
 
 // Authenticated shared routes
 Route::middleware('auth:sanctum')->group(function () {
