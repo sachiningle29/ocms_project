@@ -19,6 +19,7 @@ const contract = reactive({
     id: null,
     rid: '',
     title: '',
+    contractor_name: '',   // maps to "Vendor" column
     deliverables: '',
     indenting_section: '',
     indentor_do: '',
@@ -28,7 +29,7 @@ const contract = reactive({
     aa_date: '',
     sanction_date: '',
     indent_date: '',
-    vendor_type: '', // Dropdown field
+    vendor_type: '',
     tender_do: '',
     tender_type: '',
     tendering_section: '',
@@ -45,7 +46,6 @@ const contract = reactive({
     percentage_above_below: '',
     contract_start_date: '',
     contract_end_date: '',
-    contractor_name: '',
     physical_progress: '',
     status: 'active',
     addl_dealing_officer: ''
@@ -59,7 +59,19 @@ const statusOptions = [
 
 const vendorTypeOptions = [
     { label: 'OEM', value: 'OEM' },
-    { label: 'Non OEM', value: 'Non OEM' }
+    { label: 'Non OEM', value: 'Non-OEM' }
+];
+
+// New dropdown options you asked for:
+const deliverablesOptions = [
+    { label: 'Material', value: 'Material' },
+    { label: 'Services', value: 'Services' },
+    { label: 'Capital', value: 'Capital' }
+];
+
+const tenderTypeOptions = [
+    { label: 'Non RC', value: 'Non RC' },
+    { label: 'Open', value: 'Open' }
 ];
 
 const filters = ref({
@@ -205,12 +217,12 @@ function deleteSelectedContracts() {
             <template #start>
                 <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
                 <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected"
-                        :disabled="!selectedContracts.length" />
+                    :disabled="!selectedContracts.length" />
             </template>
         </Toolbar>
 
         <DataTable ref="dt" v-model:selection="selectedContracts" :value="contracts" dataKey="id" :paginator="true"
-                   :rows="10" :filters="filters" :rowsPerPageOptions="[5, 10, 25]">
+            :rows="10" :filters="filters" :rowsPerPageOptions="[5, 10, 25]">
             <template #header>
                 <div class="flex justify-between items-center">
                     <h4 class="m-0">Hiring Contracts</h4>
@@ -221,54 +233,76 @@ function deleteSelectedContracts() {
                 </div>
             </template>
 
-            <Column selectionMode="multiple" style="width: 3rem" />
+            <Column header="Sr. No">
+                <template #body="slotProps">
+                    {{ dt.first + slotProps.index + 1 }}
+                </template>
+            </Column>
             <Column header="RID" field="rid" sortable />
             <Column header="Title" field="title" sortable />
-            <Column header="Vendor" field="vendor_name" sortable />
-            <Column header="Work Order No" field="work_order_no" sortable />
-            <Column header="Type" field="contract_type" sortable />
-            <Column header="Department" field="department" sortable />
+            <Column header="Vendor" field="contractor_name" sortable />
+            <!-- Removed Work Order No and Contract Type Columns -->
+            <!-- <Column header="Work Order No" field="work_order_no" sortable /> -->
+            <!-- <Column header="Type" field="contract_type" sortable /> -->
             <Column header="Status" field="status" sortable />
 
             <Column header="Actions" :exportable="false">
                 <template #body="slotProps">
                     <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editContract(slotProps.data)" />
                     <Button icon="pi pi-trash" outlined rounded severity="danger"
-                            @click="confirmDeleteContract(slotProps.data)" />
+                        @click="confirmDeleteContract(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
 
         <Dialog v-model:visible="contractDialog" modal header="Contract Details" style="width: 70vw" :draggable="false">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+
+                <!-- Render all fields except removed ones -->
                 <div v-for="field in [
-                    'rid', 'title', 'deliverables', 'indenting_section', 'indentor_do', 'value_inr',
+                    'rid', 'title',
+                    // Removed 'work_order_no', 'contract_type',
+                    'indenting_section', 'indentor_do', 'value_inr',
                     'reqmt_recd_date', 'case_initiation_date', 'aa_date', 'sanction_date', 'indent_date',
-                    'tender_do', 'tender_type', 'tendering_section', 'nit_date',
+                    'tender_do', 'tendering_section', 'nit_date',
                     'tbo_date', 'pbo_date', 'noa_po_date', 'delivery_date', 'post_contract',
                     'pr_no', 'method', 'contract_no', 'sanction_value_cr', 'percentage_above_below',
                     'contract_start_date', 'contract_end_date', 'contractor_name', 'physical_progress',
                     'addl_dealing_officer'
                 ]" :key="field" class="flex flex-col">
                     <label :for="field" class="font-bold mb-1 block">
-                        {{ field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) }}
+                        {{field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}}
                     </label>
                     <InputText v-model="contract[field]" :type="field.includes('date') ? 'date' : 'text'"
-                               class="w-full" />
+                        class="w-full" />
+                </div>
+
+                <!-- Deliverables Dropdown -->
+                <div class="flex flex-col">
+                    <label class="font-bold mb-1 block">Deliverables</label>
+                    <Dropdown v-model="contract.deliverables" :options="deliverablesOptions" optionLabel="label"
+                        optionValue="value" class="w-full" />
                 </div>
 
                 <!-- Vendor Type Dropdown -->
                 <div class="flex flex-col">
                     <label class="font-bold mb-1 block">Vendor Type</label>
-                    <Dropdown v-model="contract.vendor_type" :options="vendorTypeOptions"
-                              optionLabel="label" optionValue="value" class="w-full" />
+                    <Dropdown v-model="contract.vendor_type" :options="vendorTypeOptions" optionLabel="label"
+                        optionValue="value" class="w-full" />
+                </div>
+
+                <!-- Tender Type Dropdown -->
+                <div class="flex flex-col">
+                    <label class="font-bold mb-1 block">Tender Type</label>
+                    <Dropdown v-model="contract.tender_type" :options="tenderTypeOptions" optionLabel="label"
+                        optionValue="value" class="w-full" />
                 </div>
 
                 <!-- Status Dropdown -->
                 <div class="flex flex-col">
                     <label class="font-bold mb-1 block">Status</label>
-                    <Dropdown v-model="contract.status" :options="statusOptions"
-                              optionLabel="label" optionValue="value" class="w-full" />
+                    <Dropdown v-model="contract.status" :options="statusOptions" optionLabel="label" optionValue="value"
+                        class="w-full" />
                 </div>
             </div>
 
@@ -301,12 +335,23 @@ function deleteSelectedContracts() {
         </Dialog>
     </div>
 </template>
-
 <style scoped>
-.confirmation-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.2rem;
+.p-input-icon-left {
+    position: relative;
+    display: inline-block;
+}
+
+.p-input-icon-left>i {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #888;
+    font-size: 1rem;
+}
+
+.p-input-icon-left>input {
+    padding-left: 2.5rem !important;
 }
 </style>
