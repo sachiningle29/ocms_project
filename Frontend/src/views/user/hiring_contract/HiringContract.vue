@@ -444,7 +444,7 @@ function deleteSelectedContracts() {
 
                 <div class="flex justify-end space-x-3">
                     <Button label="Save" icon="pi pi-check" @click="saveContract" />
-                    <Button label="Cancel" icon="pi pi-times" class="p-button-secondary"
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-danger"
                         @click="contractDialog = false" />
                 </div>
             </div>
