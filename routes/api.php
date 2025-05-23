@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\User\HiringContractController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SectionController;
+use App\Http\Controllers\SubSectionController;
 use App\Http\Controllers\User\RunningContractController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::apiResource('items', ItemController::class);
 Route::apiResource('users', UserController::class);
+Route::apiResource('sections', SectionController::class);
+Route::apiResource('subSections', SubSectionController::class);
 
 // Public routes
 Route::post('/login/admin', [AuthController::class, 'Adminlogin']);
