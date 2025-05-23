@@ -34,6 +34,7 @@ function loadSubSections() {
     axiosClient
         .get(apiBase)
         .then((response) => {
+            console.log('Fetched sub sections:', response.data); 
             subSections.value = response.data || [];
         })
         .catch((error) => {
@@ -41,6 +42,7 @@ function loadSubSections() {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load subSections', life: 3000 });
         });
 }
+
 
 function openNew() {
     Object.assign(subSection, { id: null, name: '' });
@@ -56,39 +58,44 @@ function hideDialog() {
 function saveSubSection() {
     submitted.value = true;
 
-    if (!subSection.name?.trim()) {
-        toast.add({ severity: 'warn', summary: 'Validation', detail: 'Name is required', life: 3000 });
+    if (!selectedSection.value) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'Section is required', life: 3000 });
         return;
     }
 
-    const payload = { ...subSection };
+    const payload = {
+        section_id: selectedSection.value,
+        sub_sections: subSectionInputs.value.filter(sub => sub.name?.trim()).map(sub => ({ name: sub.name.trim() }))
+    };
 
-    const request = subSection.id
-        ? axiosClient.put(`${apiBase}/${subSection.id}`, payload)
-        : axiosClient.post(apiBase, payload);
-
-    request
+    axiosClient.post(apiBase, payload)
         .then(() => {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: subSection.id ? 'Sub Section updated successfully' : 'Sub Section created successfully',
+                detail: 'Sub Sections created successfully',
                 life: 3000
             });
             loadSubSections();
             subSectionDialog.value = false;
+            selectedSection.value = null;
+            subSectionInputs.value = [{ name: '' }];
         })
         .catch((error) => {
             console.error('saveSubSection error:', error.response?.data || error.message);
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save subSection', life: 3000 });
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save subSections', life: 3000 });
         });
 }
+
+
 
 function editSubSection(u) {
     axiosClient
         .get(`${apiBase}/${u.id}`)
         .then((response) => {
             Object.assign(subSection, response.data);
+            selectedSection.value = response.data.section_id;
+            subSectionInputs.value = [{ name: response.data.sub_section_name }];
             subSectionDialog.value = true;
         })
         .catch((error) => {
@@ -96,6 +103,7 @@ function editSubSection(u) {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load sub section details', life: 3000 });
         });
 }
+
 
 function confirmDeleteSubSection(u) {
     Object.assign(subSection, u);
@@ -198,7 +206,8 @@ function removeSubSection(index) {
                     {{ slotProps.index + 1 }}
                 </template>
             </Column>
-            <Column field="name" header="Section Name" sortable />
+          <Column field="sub_section_name" header="Sub Section Name" sortable />
+
             <Column :exportable="false" header="Actions" style="width: 10rem">
                 <template #body="slotProps">
                     <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editSubSection(slotProps.data)" />
