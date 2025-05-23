@@ -38,7 +38,7 @@ class RunningContractController extends Controller
         ]);
 
         $contract = RunningContract::create($validated);
-        dd($contract);
+      
         return response()->json($contract, 201);
     }
 

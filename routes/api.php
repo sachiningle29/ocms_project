@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\User\HiringContractController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SubSectionController;
@@ -34,19 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 // Running Contracts
-Route::prefix('running-contracts')->group(function () {
-    Route::get('/list', [RunningContractController::class, 'index']);
-    Route::post('/add', [RunningContractController::class, 'store']);
-    Route::get('/view/{id}', [RunningContractController::class, 'show']);
-    Route::put('/edit/{id}', [RunningContractController::class, 'update']);
-    Route::delete('/delete/{id}', [RunningContractController::class, 'destroy']);
-});
+Route::apiResource('running-contracts', RunningContractController::class);
 
-Route::prefix('hiring-contracts')->group(function () {
-    Route::get('/list', [RunningContractController::class, 'index']);
-    Route::post('/add', [RunningContractController::class, 'store']);
-    Route::get('/view/{id}', [RunningContractController::class, 'show']);
-    Route::put('/edit/{id}', [RunningContractController::class, 'update']);
-    Route::delete('/delete/{id}', [RunningContractController::class, 'destroy']);
-});
+Route::apiResource('hiring-contracts', HiringContractController::class);
 
