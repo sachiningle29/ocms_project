@@ -10,47 +10,59 @@ class SubSectionController extends Controller
 {
     public function index()
     {
-        $subSections = SubSection::all();
+        // Optionally eager load related section
+        $subSections = SubSection::with('section')->get();
         return response()->json($subSections);
     }
 
-    public function store(Request $request)
-    {
-         try {
-            $validated = $request->validate([
-                'name' => 'required',
+   public function store(Request $request)
+{
+    try {
+        $request->validate([
+            'section_id' => 'required|exists:sections,id',
+            'sub_sections' => 'required|array|min:1',
+            'sub_sections.*.name' => 'required|string'
+        ]);
+
+        $created = [];
+
+        foreach ($request->sub_sections as $sub) {
+            $created[] = SubSection::create([
+                'section_id' => $request->section_id,
+                'sub_section_name' => $sub['name']
             ]);
-
-            $subSection = new SubSection();
-            $subSection->sub_section_name = $validated['name'];
-            $subSection->save();
-
-            return response()->json($subSection, 201);
-        } catch (\Throwable $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
+
+        return response()->json($created, 201);
+
+    } catch (\Throwable $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
     }
+}
+
 
     public function show(string $id)
     {
-        $subSection = subSection::find($id);
+        $subSection = SubSection::with('section')->find($id);
         if (!$subSection) {
-            return response()->json(['message' => 'subSection not found'], 404);
+            return response()->json(['message' => 'SubSection not found'], 404);
         }
         return response()->json($subSection);
     }
 
     public function update(Request $request, string $id)
     {
-         $subSection = subSection::find($id);
+        $subSection = SubSection::find($id);
         if (!$subSection) {
-            return response()->json(['message' => 'subSection not found'], 404);
+            return response()->json(['message' => 'SubSection not found'], 404);
         }
 
         $validated = $request->validate([
-            'name' => ['required'],
+            'section_id' => 'required|exists:sections,id',
+            'name' => 'required|string|max:255',
         ]);
 
+        $subSection->section_id = $validated['section_id'];
         $subSection->sub_section_name = $validated['name'];
         $subSection->save();
 
@@ -59,13 +71,13 @@ class SubSectionController extends Controller
 
     public function destroy(string $id)
     {
-        $subSection = subSection::find($id);
+        $subSection = SubSection::find($id);
         if (!$subSection) {
-            return response()->json(['message' => 'subSection not found'], 404);
+            return response()->json(['message' => 'SubSection not found'], 404);
         }
 
         $subSection->delete();
 
-        return response()->json(['message' => 'subSection deleted successfully']);
+        return response()->json(['message' => 'SubSection deleted successfully']);
     }
 }
