@@ -48,6 +48,16 @@ const router = createRouter({
                     name: 'addUser',
                     component: () => import('@/views/admin/User/User.vue')
                 },
+                {
+                    path: '/admin/section',
+                    name: 'section',
+                    component: () => import('@/views/admin/Section/Section.vue')
+                },
+                {
+                    path: '/admin/subsection',
+                    name: 'subsection',
+                    component: () => import('@/views/admin/SubSection/SubSection.vue')
+                },
 
                 
                 {
