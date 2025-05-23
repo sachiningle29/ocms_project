@@ -17,7 +17,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::apiResource('items', ItemController::class);
 Route::apiResource('users', UserController::class);
 Route::apiResource('sections', SectionController::class);
-Route::apiResource('sub_sections', SubSectionController::class);
+Route::apiResource('subSections', SubSectionController::class);
 
 // Public routes
 Route::post('/login/admin', [AuthController::class, 'Adminlogin']);
