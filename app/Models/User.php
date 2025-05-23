@@ -23,8 +23,10 @@ class User extends Authenticatable
         'email',
         'cpf_no',
         'password',
-        'user_type',
+        'is_admin',
         'user_status',
+        'section',
+        'section_id'
     ];
 
     /**
