@@ -19,6 +19,7 @@ const contract = reactive({
     id: null,
     rid: '',
     title: '',
+    contractor_name: '',   // maps to "Vendor" column
     deliverables: '',
     indenting_section: '',
     indentor_do: '',
@@ -28,7 +29,7 @@ const contract = reactive({
     aa_date: '',
     sanction_date: '',
     indent_date: '',
-    vendor_type: '', // Dropdown field
+    vendor_type: '',
     tender_do: '',
     tender_type: '',
     tendering_section: '',
@@ -45,7 +46,6 @@ const contract = reactive({
     percentage_above_below: '',
     contract_start_date: '',
     contract_end_date: '',
-    contractor_name: '',
     physical_progress: '',
     status: 'active',
     addl_dealing_officer: ''
@@ -59,7 +59,19 @@ const statusOptions = [
 
 const vendorTypeOptions = [
     { label: 'OEM', value: 'OEM' },
-    { label: 'Non OEM', value: 'Non OEM' }
+    { label: 'Non OEM', value: 'Non-OEM' }
+];
+
+// New dropdown options you asked for:
+const deliverablesOptions = [
+    { label: 'Material', value: 'Material' },
+    { label: 'Services', value: 'Services' },
+    { label: 'Capital', value: 'Capital' }
+];
+
+const tenderTypeOptions = [
+    { label: 'Non RC', value: 'Non RC' },
+    { label: 'Open', value: 'Open' }
 ];
 
 const filters = ref({
@@ -205,12 +217,12 @@ function deleteSelectedContracts() {
             <template #start>
                 <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
                 <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected"
-                        :disabled="!selectedContracts.length" />
+                    :disabled="!selectedContracts.length" />
             </template>
         </Toolbar>
 
         <DataTable ref="dt" v-model:selection="selectedContracts" :value="contracts" dataKey="id" :paginator="true"
-                   :rows="10" :filters="filters" :rowsPerPageOptions="[5, 10, 25]">
+            :rows="10" :filters="filters" :rowsPerPageOptions="[5, 10, 25]">
             <template #header>
                 <div class="flex justify-between items-center">
                     <h4 class="m-0">Hiring Contracts</h4>
@@ -221,62 +233,223 @@ function deleteSelectedContracts() {
                 </div>
             </template>
 
-            <Column selectionMode="multiple" style="width: 3rem" />
+            <Column header="Sr. No">
+                <template #body="slotProps">
+                    {{ dt.first + slotProps.index + 1 }}
+                </template>
+            </Column>
             <Column header="RID" field="rid" sortable />
             <Column header="Title" field="title" sortable />
-            <Column header="Vendor" field="vendor_name" sortable />
-            <Column header="Work Order No" field="work_order_no" sortable />
-            <Column header="Type" field="contract_type" sortable />
-            <Column header="Department" field="department" sortable />
+            <Column header="Vendor" field="contractor_name" sortable />
+            <!-- Removed Work Order No and Contract Type Columns -->
+            <!-- <Column header="Work Order No" field="work_order_no" sortable /> -->
+            <!-- <Column header="Type" field="contract_type" sortable /> -->
             <Column header="Status" field="status" sortable />
 
             <Column header="Actions" :exportable="false">
                 <template #body="slotProps">
                     <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editContract(slotProps.data)" />
                     <Button icon="pi pi-trash" outlined rounded severity="danger"
-                            @click="confirmDeleteContract(slotProps.data)" />
+                        @click="confirmDeleteContract(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
 
         <Dialog v-model:visible="contractDialog" modal header="Contract Details" style="width: 70vw" :draggable="false">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-                <div v-for="field in [
-                    'rid', 'title', 'deliverables', 'indenting_section', 'indentor_do', 'value_inr',
-                    'reqmt_recd_date', 'case_initiation_date', 'aa_date', 'sanction_date', 'indent_date',
-                    'tender_do', 'tender_type', 'tendering_section', 'nit_date',
-                    'tbo_date', 'pbo_date', 'noa_po_date', 'delivery_date', 'post_contract',
-                    'pr_no', 'method', 'contract_no', 'sanction_value_cr', 'percentage_above_below',
-                    'contract_start_date', 'contract_end_date', 'contractor_name', 'physical_progress',
-                    'addl_dealing_officer'
-                ]" :key="field" class="flex flex-col">
-                    <label :for="field" class="font-bold mb-1 block">
-                        {{ field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) }}
-                    </label>
-                    <InputText v-model="contract[field]" :type="field.includes('date') ? 'date' : 'text'"
-                               class="w-full" />
-                </div>
+            <div class="p-4 space-y-6">
 
-                <!-- Vendor Type Dropdown -->
-                <div class="flex flex-col">
-                    <label class="font-bold mb-1 block">Vendor Type</label>
-                    <Dropdown v-model="contract.vendor_type" :options="vendorTypeOptions"
-                              optionLabel="label" optionValue="value" class="w-full" />
-                </div>
+                <!-- Indenter Section -->
+                <fieldset class="border rounded p-4">
+                    <legend class="font-semibold text-lg mb-2">Indenter Section</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-                <!-- Status Dropdown -->
-                <div class="flex flex-col">
-                    <label class="font-bold mb-1 block">Status</label>
-                    <Dropdown v-model="contract.status" :options="statusOptions"
-                              optionLabel="label" optionValue="value" class="w-full" />
+                        <!-- Sl.No. (Assuming index from DataTable, else add as needed) -->
+
+                        <div class="flex flex-col">
+                            <label for="title" class="font-bold mb-1 block">Case Short Title</label>
+                            <InputText v-model="contract.title" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="deliverables" class="font-bold mb-1 block">Deliverables</label>
+                            <Dropdown v-model="contract.deliverables" :options="deliverablesOptions" optionLabel="label"
+                                placeholder="Select Deliverable" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="indenting_section" class="font-bold mb-1 block">Indenting Section</label>
+                            <InputText v-model="contract.indenting_section" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="indentor_do" class="font-bold mb-1 block">Indentor DO</label>
+                            <InputText v-model="contract.indentor_do" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="value_inr" class="font-bold mb-1 block">Value in ₹</label>
+                            <InputText v-model="contract.value_inr" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="reqmt_recd_date" class="font-bold mb-1 block">Reqmt Recd Date</label>
+                            <InputText v-model="contract.reqmt_recd_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="case_initiation_date" class="font-bold mb-1 block">Case Initiation Date</label>
+                            <InputText v-model="contract.case_initiation_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="aa_date" class="font-bold mb-1 block">AA Date</label>
+                            <InputText v-model="contract.aa_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="sanction_date" class="font-bold mb-1 block">Sanction Date</label>
+                            <InputText v-model="contract.sanction_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="indent_date" class="font-bold mb-1 block">Indent Date</label>
+                            <InputText v-model="contract.indent_date" type="date" class="w-full" />
+                        </div>
+
+                    </div>
+                </fieldset>
+
+                <!-- Tender Section -->
+                <fieldset class="border rounded p-4">
+                    <legend class="font-semibold text-lg mb-2">Tender Section</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                        <div class="flex flex-col">
+                            <label for="contractor_name" class="font-bold mb-1 block">Vendor (OEM / Non-OEM)</label>
+                            <InputText v-model="contract.contractor_name" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="tender_do" class="font-bold mb-1 block">Tender DO</label>
+                            <InputText v-model="contract.tender_do" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="tender_type" class="font-bold mb-1 block">Tender Type</label>
+                            <Dropdown v-model="contract.tender_type" :options="tenderTypeOptions" optionLabel="label"
+                                placeholder="Select Tender Type" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="tendering_section" class="font-bold mb-1 block">Tendering Section</label>
+                            <InputText v-model="contract.tendering_section" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="nit_date" class="font-bold mb-1 block">NIT Date</label>
+                            <InputText v-model="contract.nit_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="tbo_date" class="font-bold mb-1 block">TBO Date</label>
+                            <InputText v-model="contract.tbo_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="pbo_date" class="font-bold mb-1 block">PBO Date</label>
+                            <InputText v-model="contract.pbo_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="noa_po_date" class="font-bold mb-1 block">NOA/PO Date</label>
+                            <InputText v-model="contract.noa_po_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="delivery_date" class="font-bold mb-1 block">Delivery Date</label>
+                            <InputText v-model="contract.delivery_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="post_contract" class="font-bold mb-1 block">Post Contract</label>
+                            <InputText v-model="contract.post_contract" class="w-full" />
+                        </div>
+
+                    </div>
+                </fieldset>
+
+                <!-- Misc Section -->
+                <fieldset class="border rounded p-4">
+                    <legend class="font-semibold text-lg mb-2">Miscellaneous</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                        <div class="flex flex-col">
+                            <label for="pr_no" class="font-bold mb-1 block">PR No.</label>
+                            <InputText v-model="contract.pr_no" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="method" class="font-bold mb-1 block">Method (GeM / GePNIC / E-tender / Impetus /
+                                Email /
+                                Physical)</label>
+                            <InputText v-model="contract.method" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="contract_no" class="font-bold mb-1 block">NOA / Contract / PO No.</label>
+                            <InputText v-model="contract.contract_no" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="sanction_value_cr" class="font-bold mb-1 block">Sanction (PR) Value (Cr.)
+                                (INR)</label>
+                            <InputText v-model="contract.sanction_value_cr" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="percentage_above_below" class="font-bold mb-1 block">Percentage Above /
+                                Below</label>
+                            <InputText v-model="contract.percentage_above_below" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="contract_start_date" class="font-bold mb-1 block">Contract Start Date</label>
+                            <InputText v-model="contract.contract_start_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="contract_end_date" class="font-bold mb-1 block">Contract End Date</label>
+                            <InputText v-model="contract.contract_end_date" type="date" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="contractor_name" class="font-bold mb-1 block">Contractor Name</label>
+                            <InputText v-model="contract.contractor_name" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="physical_progress" class="font-bold mb-1 block">Physical Progress of Work (%)
+                                till
+                                Date</label>
+                            <InputText v-model="contract.physical_progress" class="w-full" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label for="status" class="font-bold mb-1 block">Status</label>
+                            <InputText v-model="contract.status" class="w-full" />
+                        </div>
+
+                    </div>
+                </fieldset>
+
+                <div class="flex justify-end space-x-3">
+                    <Button label="Save" icon="pi pi-check" @click="saveContract" />
+                    <Button label="Cancel" icon="pi pi-times" class="p-button-secondary"
+                        @click="contractDialog = false" />
                 </div>
             </div>
-
-            <template #footer>
-                <Button label="Close" icon="pi pi-times" text @click="hideDialog" />
-                <Button label="Save" icon="pi pi-check" @click="saveContract" />
-            </template>
         </Dialog>
+
 
         <Dialog v-model:visible="deleteContractDialog" modal header="Confirm" style="width: 450px">
             <div class="confirmation-content">
@@ -301,12 +474,23 @@ function deleteSelectedContracts() {
         </Dialog>
     </div>
 </template>
-
 <style scoped>
-.confirmation-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.2rem;
+.p-input-icon-left {
+    position: relative;
+    display: inline-block;
+}
+
+.p-input-icon-left>i {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #888;
+    font-size: 1rem;
+}
+
+.p-input-icon-left>input {
+    padding-left: 2.5rem !important;
 }
 </style>
