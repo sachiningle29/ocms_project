@@ -13,14 +13,15 @@ use Illuminate\Http\Middleware\HandleCors;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'admin' => \App\Http\Middleware\Admin::class,
+            'userauth' => \App\Http\Middleware\UserAuth::class, // ✅ Add this line
         ]);
 
         $middleware->prepend([
@@ -30,13 +31,23 @@ return Application::configure(basePath: dirname(__DIR__))
             StartSession::class,
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
-    
         ]);
 
         $middleware->group('web', [
-            // Web middleware stack
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            VerifyCsrfToken::class,
+            SubstituteBindings::class,
         ]);
-        
+
+        $middleware->group('api', [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
+            SubstituteBindings::class,
+        ]);
+
         // Exclude API routes from CSRF protection
         $middleware->validateCsrfTokens(except: [
             'api/*',
