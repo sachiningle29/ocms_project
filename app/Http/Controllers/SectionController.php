@@ -20,7 +20,7 @@ class SectionController extends Controller
     {
         $validated = $request->validate([
             'section_name' => 'required|string|max:255',
-            'sub_sectionId' => 'nullable|integer|exists:sections,id', // assuming sub_sectionId is an FK to sections.id
+            'sub_sectionId' => 'nullable|integer|exists:sections,id', 
         ]);
 
         $section = Section::create($validated);
