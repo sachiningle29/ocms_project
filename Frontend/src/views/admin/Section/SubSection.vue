@@ -96,9 +96,7 @@ function saveSubSection() {
         // Create multiple subSections
         const payload = {
             section_id: selectedSection.value,
-            sub_sections: subSectionInputs.value
-                .filter((sub) => sub.name?.trim())
-                .map((sub) => ({ name: sub.name.trim() }))
+            sub_sections: subSectionInputs.value.filter((sub) => sub.name?.trim()).map((sub) => ({ name: sub.name.trim() }))
         };
 
         axiosClient
@@ -201,8 +199,20 @@ const groupedSubSections = computed(() => {
 
     return grouped;
 });
-</script>
 
+const viewDialog = ref(false);
+const viewedSection = ref({});
+const viewedSubSections = ref([]);
+
+function viewSubSections(sectionId) {
+    const section = sections.value.find(s => s.id === sectionId);
+    const subs = subSections.value.filter(sub => sub.section_id === sectionId);
+
+    viewedSection.value = section || {};
+    viewedSubSections.value = subs;
+    viewDialog.value = true;
+}
+</script>
 
 <template>
     <div class="card">
@@ -213,44 +223,118 @@ const groupedSubSections = computed(() => {
             </template>
         </Toolbar>
 
-        <DataTable ref="dt" :value="groupedSubSections" dataKey="id" :paginator="true" :rows="10" :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subSections">
-            <template #header>
-                <div class="flex justify-between items-center">
-                    <h4 class="m-0">Sub Section Management</h4>
-                    <span class="p-input-icon-left">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters['global'].value" placeholder="Search..." />
-                    </span>
+        <DataTable
+    ref="dt"
+    :value="groupedSubSections"
+    v-model:selection="selectedSubSections"
+    selectionMode="multiple"
+    dataKey="id"
+    :paginator="true"
+    :rows="10"
+    :rowsPerPageOptions="[5, 10, 25]"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subSections"
+>
+    <template #header>
+        <div class="flex justify-between items-center">
+            <h4 class="m-0">Hiring Contracts</h4>
+            <div class="flex items-center gap-2">
+                <Button
+                    label="Delete Selected"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    outlined
+                    @click="confirmDeleteSelected"
+                    :disabled="!selectedSubSections.length"
+                />
+                <span class="p-input-icon-left">
+                    <InputText v-model="filters['global'].value" placeholder="Search..." />
+                </span>
+            </div>
+        </div>
+    </template>
+
+    <!-- ✅ Selection Checkbox Column -->
+    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+
+    <!-- Sr No. -->
+    <Column header="Sr No." style="width: 6rem">
+        <template #body="slotProps">
+            <span v-if="slotProps.data._showSrNo">{{ slotProps.data._srNo }}</span>
+        </template>
+    </Column>
+
+    <!-- Sub Section Name -->
+    <Column field="sub_section_name" header="Sub Section Name" />
+
+    <!-- Section Name -->
+    <Column header="Section Name">
+        <template #body="slotProps">
+            <span v-if="slotProps.data._showSection">{{ slotProps.data.section_name }}</span>
+        </template>
+    </Column>
+
+    <!-- Actions -->
+    <Column :exportable="false" header="Actions" style="width: 12rem">
+        <template #body="slotProps">
+            <Button
+                icon="pi pi-eye"
+                outlined
+                severity="info"
+                rounded
+                class="mr-2"
+                @click="viewSubSections(slotProps.data.section_id)"
+            />
+            <Button
+                icon="pi pi-pencil"
+                outlined
+                rounded
+                class="mr-2"
+                @click="editSubSection(slotProps.data)"
+            />
+            <Button
+                icon="pi pi-trash"
+                outlined
+                rounded
+                severity="danger"
+                @click="confirmDeleteSubSection(slotProps.data)"
+            />
+        </template>
+    </Column>
+</DataTable>
+
+<Dialog v-model:visible="viewDialog" header="Section & Sub-Sections" modal class="rounded-xl" style="width: 50vw">
+    <template #default>
+        <div class="p-4">
+            <div class="mb-4">
+                <h2 class="text-xl font-semibold text-primary flex items-center gap-2">
+                    <i class="pi pi-folder-open text-lg text-blue-500" />
+                    {{ viewedSection.section_name || 'No Section Selected' }}
+                </h2>
+                <p class="text-sm text-gray-500">Below are the sub-sections linked to this section.</p>
+            </div>
+
+            <div v-if="viewedSubSections.length" class="space-y-3">
+                <div
+                    v-for="(sub, i) in viewedSubSections"
+                    :key="i"
+                    class="p-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm flex items-center gap-3"
+                >
+                    <i class="pi pi-angle-right text-blue-500" />
+                    <span class="text-base">{{ sub.sub_section_name }}</span>
                 </div>
-            </template>
+            </div>
+            <div v-else class="text-center text-gray-400 py-5">
+                <i class="pi pi-info-circle text-xl" />
+                <p class="mt-2">No sub-sections found for this section.</p>
+            </div>
+        </div>
+    </template>
 
-            <!-- Sr No. -->
-            <Column header="Sr No." style="width: 6rem">
-                <template #body="slotProps">
-                    <span v-if="slotProps.data._showSrNo">{{ slotProps.data._srNo }}</span>
-                </template>
-            </Column>
+    <template #footer>
+        <Button label="Close" icon="pi pi-times" class="p-button-text" @click="viewDialog = false" />
+    </template>
+</Dialog>
 
-            <!-- Sub Section Name -->
-            <Column field="sub_section_name" header="Sub Section Name" />
-
-            <!-- Section Name -->
-            <Column header="Section Name">
-                <template #body="slotProps">
-                    <span v-if="slotProps.data._showSection">{{ slotProps.data.section_name }}</span>
-                </template>
-            </Column>
-
-            
-
-            <!-- Actions -->
-            <Column :exportable="false" header="Actions" style="width: 10rem">
-                <template #body="slotProps">
-                    <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editSubSection(slotProps.data)" />
-                    <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteSubSection(slotProps.data)" />
-                </template>
-            </Column>
-        </DataTable>
 
         <!-- Create/Edit Dialog -->
         <Dialog v-model:visible="subSectionDialog" :draggable="false" modal header="Sub Section Details" :closable="false" style="width: 40vw">
