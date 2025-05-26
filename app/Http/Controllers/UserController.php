@@ -9,13 +9,11 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-
     public function index()
     {
         $users = User::all();
         return response()->json($users);
     }
-
 
     public function store(Request $request)
     {
@@ -27,6 +25,8 @@ class UserController extends Controller
                 'password' => 'required|string|min:6',
                 'is_admin' => ['required', Rule::in([0, 1])],
                 'user_status' => ['required', Rule::in(['active', 'inactive'])],
+                'section' => 'nullable|string|max:255',
+                'section_id' => 'nullable|integer',
             ]);
 
             $user = new User();
@@ -36,6 +36,8 @@ class UserController extends Controller
             $user->password = Hash::make($validated['password']);
             $user->is_admin = $validated['is_admin'];
             $user->user_status = $validated['user_status'];
+            $user->section = $validated['section'] ?? null;
+            $user->section_id = $validated['section_id'] ?? null;
             $user->save();
 
             return response()->json($user, 201);
@@ -43,8 +45,6 @@ class UserController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-
 
     public function show(string $id)
     {
@@ -55,9 +55,7 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    /**
-     * Update the specified user.
-     */ public function update(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         $user = User::find($id);
         if (!$user) {
@@ -71,6 +69,8 @@ class UserController extends Controller
             'password' => 'nullable|string|min:6',
             'is_admin' => ['required', Rule::in([0, 1])],
             'user_status' => ['required', Rule::in(['active', 'inactive'])],
+            'section' => 'nullable|string',
+            'section_id' => 'nullable|integer',
         ]);
 
         $user->name = $validated['name'];
@@ -81,19 +81,16 @@ class UserController extends Controller
             $user->password = Hash::make($validated['password']);
         }
 
-
-        $user->is_admin = ($validated['is_admin'] === 'admin') ? 1 : 0;
-
+        $user->is_admin = $validated['is_admin'];
         $user->user_status = $validated['user_status'];
+        $user->section = $validated['section'] ?? null;
+        $user->section_id = $validated['section_id'] ?? null;
+
         $user->save();
 
         return response()->json($user);
     }
 
-
-    /**
-     * Remove the specified user.
-     */
     public function destroy(string $id)
     {
         $user = User::find($id);
