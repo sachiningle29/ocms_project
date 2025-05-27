@@ -7,17 +7,20 @@ const router = createRouter({
         {
             path: '/',
             name: 'welcome',
-            component: () => import('@/views/pages/auth/Welcome.vue')
+            component: () => import('@/views/pages/auth/Welcome.vue'),
+            meta: { requiresAuth: false }
         },
         {
             path: '/auth/UserLogin',
             name: 'UserLogin',
-            component: () => import('@/views/pages/auth/UserLogin.vue')
+            component: () => import('@/views/pages/auth/UserLogin.vue'),
+            meta: { requiresAuth: false }
         },
         {
             path: '/auth/AdminLogin',
             name: 'AdminLogin',
-            component: () => import('@/views/pages/auth/AdminLogin.vue')
+            component: () => import('@/views/pages/auth/AdminLogin.vue'),
+            meta: { requiresAuth: false }
         },
 
         {
@@ -28,38 +31,49 @@ const router = createRouter({
                     path: '/welcome',
                     redirect: '/auth/welcome'
                 },
+                   {
+                    path: '/auth/logout',
+                    name: 'logout',
+                    component: () => import('@/views/pages/auth/Logout.vue'),
+                    meta: { requiresAuth: false }
+                },
                 {
                     path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
                 },
+             
                 {
                     path: '/admin/dashboard',
                     name: 'Admindashboard',
-                    component: () => import('@/views/admin/Dashboard.vue')
+                    component: () => import('@/views/admin/Dashboard.vue'),
+                    meta: { requiresAuth: true, requiresAdmin: true }
                 },
                 {
                     path: '/user/dashboard',
                     name: 'Userdashboard',
-                    component: () => import('@/views/user/Dashboard.vue')
+                    component: () => import('@/views/user/Dashboard.vue'),
+                    meta: { requiresAuth: true, requiresUser: true }
                 },
                 {
                     path: '/admin/user',
                     name: 'addUser',
-                    component: () => import('@/views/admin/User/User.vue')
+                    component: () => import('@/views/admin/User/User.vue'),
+                    meta: { requiresAuth: true, requiresAdmin: true }
                 },
                 {
                     path: '/admin/section',
                     name: 'section',
-                    component: () => import('@/views/admin/Section/Section.vue')
+                    component: () => import('@/views/admin/Section/Section.vue'),
+                    meta: { requiresAuth: true, requiresAdmin: true }
                 },
                 {
                     path: '/admin/SubSection',
                     name: 'subsection',
-                    component: () => import('@/views/admin/Section/SubSection.vue')
+                    component: () => import('@/views/admin/Section/SubSection.vue'),
+                    meta: { requiresAuth: true, requiresAdmin: true }
                 },
 
-                
                 {
                     path: '/uikit/input',
                     name: 'input',
@@ -149,12 +163,14 @@ const router = createRouter({
                 {
                     path: '/user/runningcontracts',
                     name: 'RunningContracts',
-                    component: () => import('@/views/user/running_contract/RunningContract.vue')
+                    component: () => import('@/views/user/running_contract/RunningContract.vue'),
+                    meta: { requiresAuth: true, requiresUser: true }
                 },
                 {
                     path: '/user/hiringcontracts',
                     name: 'HiringContracts',
-                    component: () => import('@/views/user/hiring_contract/HiringContract.vue')
+                    component: () => import('@/views/user/hiring_contract/HiringContract.vue'),
+                    meta: { requiresAuth: true, requiresUser: true }
                 },
                 {
                     path: '/user/ItemCrud',
@@ -181,6 +197,32 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Error.vue')
         }
     ]
+});
+
+// Navigation Guard
+router.beforeEach((to, from, next) => {
+    // Check if the route requires authentication
+    const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+    const requiresAdmin = to.matched.some((record) => record.meta.requiresAdmin);
+    const requiresUser = to.matched.some((record) => record.meta.requiresUser);
+
+    // Get authentication status from Vuex store or localStorage
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    const userRole = localStorage.getItem('userRole');
+
+    if (requiresAuth && !isAuthenticated) {
+        // Redirect to welcome page if not authenticated
+        next({ name: 'welcome' });
+    } else if (requiresAdmin && userRole !== 'admin') {
+        // Redirect to access denied if not admin
+        next({ name: 'accessDenied' });
+    } else if (requiresUser && userRole !== 'user') {
+        // Redirect to access denied if not user
+        next({ name: 'accessDenied' });
+    } else {
+        // Continue to the requested route
+        next();
+    }
 });
 
 export default router;

@@ -29,6 +29,9 @@ function login() {
         .dispatch('Adminlogin', admin.value)
         .then(() => {
             loading.value = false;
+            // Store authentication status and role
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('userRole', 'admin');
             router.push({ name: 'Admindashboard' });
         })
         .catch(({ response }) => {

@@ -55,6 +55,9 @@ function login() {
   store.dispatch('Userlogin', user.value)
     .then(() => {
       loading.value = false;
+      // Store authentication status and role
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userRole', 'user');
       router.push({ name: 'Userdashboard' });
     })
     .catch(({ response }) => {
