@@ -131,7 +131,7 @@ const validateIndenting = () => {
 };
 
 const validateTendering = () => {
-    fieldErrors.contractor_name = !contract.contractor_name.trim();
+    fieldErrors.vendor_type  = !contract.vendor_type .trim();
     fieldErrors.tender_do = !contract.tender_do.trim();
     fieldErrors.tender_type = !contract.tender_type;
     fieldErrors.tendering_section = !contract.tendering_section.trim();
