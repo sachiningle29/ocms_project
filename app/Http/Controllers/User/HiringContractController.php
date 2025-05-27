@@ -23,7 +23,7 @@ class HiringContractController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'rid' => 'nullable|string|max:255',
+            // 'rid' => 'nullable|string|max:255',
             'title' => 'required|string|max:255',
             'deliverables' => 'nullable|string',
             'indenting_section' => 'nullable|string|max:255',
@@ -94,6 +94,8 @@ class HiringContractController extends Controller
             'addl_dealing_officer' => 'nullable|string|max:255',
             'status' => ['required', Rule::in(['active', 'closed', 'on_hold'])],
         ]);
+
+        $validated['rid'] = 'RID' . time() . rand(100, 999);
 
         $contract = HiringContract::create($validated);
 
