@@ -14,6 +14,8 @@ const router = useRouter();
 
 const loading = ref(false);
 const errorMsg = ref('');
+const emailError = ref('');
+const passwordError = ref('');
 
 const admin = ref({
     email: '',
@@ -21,7 +23,40 @@ const admin = ref({
     remember: false
 });
 
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function validateForm() {
+    let isValid = true;
+    emailError.value = '';
+    passwordError.value = '';
+    
+    if (!admin.value.email) {
+        emailError.value = 'Email is required';
+        isValid = false;
+    } else if (!validateEmail(admin.value.email)) {
+        emailError.value = 'Please enter a valid email address';
+        isValid = false;
+    }
+    
+    if (!admin.value.password) {
+        passwordError.value = 'Password is required';
+        isValid = false;
+    } else if (admin.value.password.length < 4) {
+        passwordError.value = 'Password must be at least 4 characters';
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
 function login() {
+    if (!validateForm()) {
+        return;
+    }
+    
     loading.value = true;
     errorMsg.value = '';
 
@@ -36,8 +71,7 @@ function login() {
         })
         .catch(({ response }) => {
             loading.value = false;
-            errorMsg.value = response?.data?.message || 'Login failed.';
-            console.log(errorMsg.value);
+            errorMsg.value = response?.data?.message || 'Login failed. Please check your credentials and try again.';
         });
 }
 </script>
@@ -73,19 +107,36 @@ function login() {
 
                         <div>
                             <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Admin Email</label>
-                            <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8" v-model="admin.email" />
+                            <InputText 
+                                id="email1" 
+                                type="text" 
+                                placeholder="Email address" 
+                                class="w-full md:w-[30rem] mb-1" 
+                                v-model="admin.email" 
+                                :class="{'p-invalid': emailError}"
+                            />
+                            <small v-if="emailError" class="p-error block mb-4">{{ emailError }}</small>
 
                             <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-                            <Password id="password1" v-model="admin.password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false" />
+                            <Password 
+                                id="password1" 
+                                v-model="admin.password" 
+                                placeholder="Password" 
+                                :toggleMask="true" 
+                                class="mb-1" 
+                                fluid 
+                                :feedback="false" 
+                                :class="{'p-invalid': passwordError}"
+                            />
+                            <small v-if="passwordError" class="p-error block mb-4">{{ passwordError }}</small>
 
                             <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-                                <div class="flex items-center">
+                                <!-- <div class="flex items-center">
                                     <Checkbox v-model="admin.remember" id="rememberme1" binary class="mr-2" />
                                     <label for="rememberme1">Remember this device</label>
-                                </div>
-                                <!-- <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Reset admin password</span> -->
+                                </div> -->
                             </div>
-                            <Button label="Login as Admin" class="w-full" type="submit"></Button>
+                            <Button label="Login as Admin" class="w-full" type="submit" :loading="loading"></Button>
                         </div>
 
                         <div v-if="errorMsg" class="mt-4 text-red-600 font-medium text-center">
@@ -111,5 +162,14 @@ function login() {
 .pi-eye-slash {
     transform: scale(1.6);
     margin-right: 1rem;
+}
+
+.p-error {
+    color: var(--red-500);
+    font-size: 0.875rem;
+}
+
+.p-invalid {
+    border-color: var(--red-500) !important;
 }
 </style>
