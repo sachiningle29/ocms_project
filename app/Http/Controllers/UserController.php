@@ -24,7 +24,7 @@ class UserController extends Controller
                 'cpf_no' => 'nullable|string|max:50',
                 'password' => 'required|string|min:6',
                 'is_admin' => ['required', Rule::in([0, 1])],
-                'user_status' => ['required', Rule::in(['active', 'inactive'])],
+                'user_status' => ['required', Rule::in(['Active', 'Inactive'])],
                 'section' => 'nullable|string|max:255',
                 'section_id' => 'nullable|integer',
             ]);
@@ -68,7 +68,7 @@ class UserController extends Controller
             'cpf_no' => 'nullable|string|max:50',
             'password' => 'nullable|string|min:6',
             'is_admin' => ['required', Rule::in([0, 1])],
-            'user_status' => ['required', Rule::in(['active', 'inactive'])],
+            'user_status' => ['required', Rule::in(['Active', 'Inactive'])],
             'section' => 'nullable|string',
             'section_id' => 'nullable|integer',
         ]);

@@ -175,29 +175,30 @@ function addSubSection() {
 function removeSubSection(index) {
     subSectionInputs.value.splice(index, 1);
 }
-
-// ✅ Grouped data for display in table
 const groupedSubSections = computed(() => {
-    const grouped = [];
-    let srNo = 1;
+  let result = [];
+  let srNo = 0;
 
-    sections.value.forEach((section) => {
-        const subs = subSections.value.filter((sub) => sub.section_id === section.id);
+  sections.value.forEach((section) => {
+    const filteredSubs = subSections.value.filter(sub => sub.section_id === section.id);
 
-        subs.forEach((sub, index) => {
-            grouped.push({
-                ...sub,
-                section_name: section.section_name,
-                _showSection: index === 0,
-                _showSrNo: index === 0,
-                _srNo: index === 0 ? srNo : ''
-            });
-        });
+    if (filteredSubs.length) {
+      srNo += 1;
+    }
 
-        if (subs.length > 0) srNo++;
+    filteredSubs.forEach((sub, subIndex) => {
+      result.push({
+        ...sub,
+        section_name: section.section_name,
+        _srNo: srNo,
+        _subNo: subIndex + 1,
+        _showSection: subIndex === 0,
+        _showSrNo: subIndex === 0,
+      });
     });
+  });
 
-    return grouped;
+  return result;
 });
 
 const viewDialog = ref(false);
@@ -218,12 +219,12 @@ function viewSubSections(sectionId) {
     <div class="card">
         <Toolbar class="mb-4">
             <template #start>
-                <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-                <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected" :disabled="!selectedSubSections || !selectedSubSections.length" />
+                <Button label="Add New Subsection" icon="pi pi-plus" severity="primary" class="mr-4" @click="openNew" />
+                <Button label="Delete" icon="pi pi-trash" severity="danger"  @click="confirmDeleteSelected" :disabled="!selectedSubSections || !selectedSubSections.length" />
             </template>
         </Toolbar>
 
-        <DataTable
+      <DataTable
     ref="dt"
     :value="groupedSubSections"
     v-model:selection="selectedSubSections"
@@ -233,21 +234,16 @@ function viewSubSections(sectionId) {
     :rows="10"
     :rowsPerPageOptions="[5, 10, 25]"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subSections"
+    :filters="filters"                         
+    :globalFilter="filters.global.value"        
 >
     <template #header>
         <div class="flex justify-between items-center">
-            <h4 class="m-0">Hiring Contracts</h4>
+            <h4 class="m-0">Sub Section Management</h4>
             <div class="flex items-center gap-2">
-                <Button
-                    label="Delete Selected"
-                    icon="pi pi-trash"
-                    severity="danger"
-                    outlined
-                    @click="confirmDeleteSelected"
-                    :disabled="!selectedSubSections.length"
-                />
+               
                 <span class="p-input-icon-left">
-                    <InputText v-model="filters['global'].value" placeholder="Search..." />
+                    <InputText v-model="filters['global'].value" placeholder="Search Sub Section..." />
                 </span>
             </div>
         </div>
@@ -256,22 +252,26 @@ function viewSubSections(sectionId) {
     <!-- ✅ Selection Checkbox Column -->
     <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
-    <!-- Sr No. -->
-    <Column header="Sr No." style="width: 6rem">
-        <template #body="slotProps">
-            <span v-if="slotProps.data._showSrNo">{{ slotProps.data._srNo }}</span>
-        </template>
-    </Column>
+   <Column header="Sr No." style="width: 6rem">
+  <template #body="slotProps">
+    <span v-if="slotProps.data._showSrNo">{{ slotProps.data._srNo }}</span>
+  </template>
+</Column>
 
-    <!-- Sub Section Name -->
-    <Column field="sub_section_name" header="Sub Section Name" />
+<Column header="Section Name" style="width: 20rem">
+  <template #body="slotProps">
+    <span v-if="slotProps.data._showSection" style="font-weight: bold;">
+      {{ slotProps.data.section_name }}
+    </span>
+  </template>
+</Column>
 
-    <!-- Section Name -->
-    <Column header="Section Name">
-        <template #body="slotProps">
-            <span v-if="slotProps.data._showSection">{{ slotProps.data.section_name }}</span>
-        </template>
-    </Column>
+
+<Column header="Sub Section Name">
+  <template #body="slotProps">
+    {{ slotProps.data._srNo }}.{{ slotProps.data._subNo }})&nbsp;{{ slotProps.data.sub_section_name }}
+  </template>
+</Column>
 
     <!-- Actions -->
     <Column :exportable="false" header="Actions" style="width: 12rem">

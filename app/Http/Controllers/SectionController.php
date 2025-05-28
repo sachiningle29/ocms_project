@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Section;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SectionController extends Controller
 {
@@ -19,7 +20,7 @@ class SectionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'section_name' => 'required|string|max:255',
+            'section_name' => 'required|string|max:255|unique:sections,section_name',
             'sub_sectionId' => 'nullable|integer|exists:sections,id', 
         ]);
 
@@ -39,8 +40,13 @@ class SectionController extends Controller
     // Update existing section
     public function update(Request $request, Section $section)
     {
-        $validated = $request->validate([
-            'section_name' => 'required|string|max:255',
+         $validated = $request->validate([
+            'section_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('sections', 'section_name')->ignore($section->id),
+            ],
             'sub_sectionId' => 'nullable|integer|exists:sections,id',
         ]);
 
