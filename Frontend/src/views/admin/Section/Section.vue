@@ -56,7 +56,7 @@ function hideDialog() {
 function saveSection() {
     submitted.value = true;
 
-if (!section.section_name?.trim()) {
+    if (!section.section_name?.trim()) {
         toast.add({ severity: 'warn', summary: 'Validation', detail: 'Section name is required', life: 3000 });
         return;
     }
@@ -79,7 +79,22 @@ if (!section.section_name?.trim()) {
         loadSections();
         sectionDialog.value = false;
     }).catch((error) => {
-        console.error('saveSection error:', error.response?.data || error.message);
+        const response = error.response;
+
+        if (response?.status === 422) {
+            const errors = response.data.errors;
+            if (errors?.section_name?.length) {
+                toast.add({
+                    severity: 'warn',
+                    summary: 'Validation',
+                    detail: errors.section_name[0], // Typically "The section name has already been taken."
+                    life: 3000
+                });
+                return;
+            }
+        }
+
+        console.error('saveSection error:', response?.data || error.message);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save section', life: 3000 });
     });
 }
@@ -140,8 +155,8 @@ function deleteSelectedSections() {
     <div class="card">
         <Toolbar class="mb-4">
             <template #start>
-                <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-                <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected"
+                <Button label="Add New Section" icon="pi pi-plus" severity="primary" class="mr-2" @click="openNew" />
+                <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
                     :disabled="!selectedSections || !selectedSections.length" />
             </template>
         </Toolbar>
@@ -181,7 +196,7 @@ function deleteSelectedSections() {
         </DataTable>
 
         <!-- Create/Edit Dialog -->
-        <Dialog v-model:visible="sectionDialog" :draggable="false" modal header="Section Details" :closable="false"
+        <Dialog v-model:visible="sectionDialog" :draggable="false" modal header="Section " :closable="false"
             style="width: 20vw">
             <div class="p-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
