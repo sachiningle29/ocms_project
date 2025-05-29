@@ -461,7 +461,22 @@ const saveSection = () => {
         });
     });
 };
+// View Button 
 
+const viewContractDialog = ref(false);
+const viewMode = ref(false);
+function viewContract(c) {
+    axiosClient.get(`${apiBase}/${c.id}`)
+        .then((res) => {
+            Object.assign(contract, res.data);
+            viewMode.value = true;
+            viewContractDialog.value = true;
+        })
+        .catch(() => {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load contract', life: 3000 });
+        });
+}
+// View Button 
 
 const editContract = (c) => {
     currentStep.value = 1;
