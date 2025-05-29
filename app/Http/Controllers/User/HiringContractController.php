@@ -22,7 +22,6 @@ class HiringContractController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-
     public function store(Request $request)
     {
         $status = $request->input('current_status');
@@ -37,25 +36,30 @@ class HiringContractController extends Controller
             'indentor_do' => 'nullable|string|max:255',
             'value_inr' => 'nullable|numeric',
 
-            // Date fields
+            // Indenting section norm date fields
             'reqmt_recd_expected_date' => 'nullable|date',
             'reqmt_recd_actual_date' => 'nullable|date',
+            'reqmt_recd_norm_date' => 'nullable|date',
             'reqmt_recd_notes' => 'nullable|string',
 
             'case_initiation_expected_date' => 'nullable|date',
             'case_initiation_actual_date' => 'nullable|date',
+            'case_initiation_norm_date' => 'nullable|date',
             'case_initiation_notes' => 'nullable|string',
 
             'aa_expected_date' => 'nullable|date',
             'aa_actual_date' => 'nullable|date',
+            'aa_norm_date' => 'nullable|date',
             'aa_notes' => 'nullable|string',
 
             'sanction_expected_date' => 'nullable|date',
             'sanction_actual_date' => 'nullable|date',
+            'sanction_norm_date' => 'nullable|date',
             'sanction_notes' => 'nullable|string',
 
             'indent_expected_date' => 'nullable|date',
             'indent_actual_date' => 'nullable|date',
+            'indent_norm_date' => 'nullable|date',
             'indent_notes' => 'nullable|string',
 
             'nit_expected_date' => 'nullable|date',
@@ -141,33 +145,39 @@ class HiringContractController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            // 'rid' => 'nullable|string|max:255',
             'title' => 'nullable|string|max:255',
             'deliverables' => 'nullable|string',
             'indenting_section' => 'nullable|string|max:255',
             'indentor_do' => 'nullable|string|max:255',
             'value_inr' => 'nullable|numeric',
 
+            // Indenting section with norm dates
             'reqmt_recd_expected_date' => 'nullable|date',
             'reqmt_recd_actual_date' => 'nullable|date',
+            'reqmt_recd_norm_date' => 'nullable|date',
             'reqmt_recd_notes' => 'nullable|string',
 
             'case_initiation_expected_date' => 'nullable|date',
             'case_initiation_actual_date' => 'nullable|date',
+            'case_initiation_norm_date' => 'nullable|date',
             'case_initiation_notes' => 'nullable|string',
 
             'aa_expected_date' => 'nullable|date',
             'aa_actual_date' => 'nullable|date',
+            'aa_norm_date' => 'nullable|date',
             'aa_notes' => 'nullable|string',
 
             'sanction_expected_date' => 'nullable|date',
             'sanction_actual_date' => 'nullable|date',
+            'sanction_norm_date' => 'nullable|date',
             'sanction_notes' => 'nullable|string',
 
             'indent_expected_date' => 'nullable|date',
             'indent_actual_date' => 'nullable|date',
+            'indent_norm_date' => 'nullable|date',
             'indent_notes' => 'nullable|string',
 
+            // Tendering & Contract stages (no norm dates)
             'nit_expected_date' => 'nullable|date',
             'nit_actual_date' => 'nullable|date',
             'nit_notes' => 'nullable|string',
@@ -196,6 +206,7 @@ class HiringContractController extends Controller
             'contract_end_actual_date' => 'nullable|date|after_or_equal:contract_start_actual_date',
             'contract_end_notes' => 'nullable|string',
 
+            // Misc fields
             'vendor_type' => ['nullable', Rule::in(['OEM', 'Non-OEM'])],
             'tender_do' => 'nullable|string|max:255',
             'tender_type' => 'nullable|string|max:255',
