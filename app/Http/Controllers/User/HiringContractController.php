@@ -4,8 +4,10 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\HiringContract;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class HiringContractController extends Controller
 {
@@ -92,9 +94,11 @@ class HiringContractController extends Controller
             'contractor_name' => 'nullable|string|max:255',
             'physical_progress' => 'nullable|string|max:255',
             'addl_dealing_officer' => 'nullable|string|max:255',
-            'status' => ['required', Rule::in(['active', 'closed', 'on_hold'])],
+            'status' => ['nullable', Rule::in(['active', 'closed', 'on_hold'])],
         ]);
-
+        if (!isset($validated['status'])) {
+            $validated['status'] = 'active';
+        }
         $validated['rid'] = 'RID' . time() . rand(100, 999);
 
         $contract = HiringContract::create($validated);
@@ -186,7 +190,7 @@ class HiringContractController extends Controller
             'contractor_name' => 'nullable|string|max:255',
             'physical_progress' => 'nullable|string|max:255',
             'addl_dealing_officer' => 'nullable|string|max:255',
-            'status' => ['required', Rule::in(['active', 'closed', 'on_hold'])],
+            'status' => ['nullable', Rule::in(['active', 'closed', 'on_hold'])],
         ]);
 
         $contract = HiringContract::findOrFail($id);
@@ -205,5 +209,32 @@ class HiringContractController extends Controller
         $contract->delete();
 
         return response()->json(['message' => 'Deleted successfully']);
+    }
+
+
+    public function getCurrentUserSection()
+    {
+        $userId = Auth::id();
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        // Using LEFT JOIN to get section data
+        $section = User::where('users.id', $userId)
+            ->leftJoin('sections', 'users.section_id', '=', 'sections.id')
+            ->select('sections.id as section_id', 'sections.section_name')
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'section' => [
+                'id' => $section->section_id ?? null,
+                'name' => $section->section_name ?? null
+            ]
+        ]);
     }
 }

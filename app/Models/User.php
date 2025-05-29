@@ -51,4 +51,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function section()
+    {
+        return $this->belongsTo(\App\Models\Section::class);
+    }
 }

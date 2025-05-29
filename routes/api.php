@@ -33,7 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 👤 User-only routes
     Route::middleware('userauth')->group(function () {
+
         Route::apiResource('running-contracts', RunningContractController::class);
+
+        Route::get('/hiring-contracts/section', [HiringContractController::class, 'getCurrentUserSection']);
         Route::apiResource('hiring-contracts', HiringContractController::class);
     });
 });
