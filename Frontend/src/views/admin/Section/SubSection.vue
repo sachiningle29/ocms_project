@@ -25,7 +25,9 @@ const selectedSubSections = ref([]);
 const submitted = ref(false);
 
 const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  section_name: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  sub_section_name: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
 const apiBase = '/subSections';
@@ -74,6 +76,48 @@ function saveSubSection() {
         return;
     }
 
+    // Validate input names
+    const inputs = subSectionInputs.value.filter(sub => sub.name?.trim());
+    if (!inputs.length) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'At least one sub-section name is required', life: 3000 });
+        return;
+    }
+
+    // Check for duplicates in current input
+    const names = inputs.map(sub => sub.name.trim().toLowerCase());
+    if (new Set(names).size !== names.length) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'Duplicate sub-section names in your input', life: 3000 });
+        return;
+    }
+
+    // Check against existing sub-sections for the selected section
+  // Check against ALL existing sub-sections across ALL sections
+const allExistingSubs = subSections.value.map(sub => ({
+    name: sub.sub_section_name.toLowerCase(),
+    section_id: sub.section_id,
+    id: sub.id
+}));
+
+const duplicates = names.filter(nameInput => {
+    return allExistingSubs.some(existing => {
+        const isSameName = existing.name === nameInput;
+        const isSameSection = existing.section_id === selectedSection.value;
+        const isDifferentRecord = !subSection.id || subSection.id !== existing.id;
+        return isSameName && isDifferentRecord;
+    });
+});
+
+if (duplicates.length) {
+    toast.add({ 
+        severity: 'warn', 
+        summary: 'Validation', 
+        detail: `These Sub Sections Already exist  ${duplicates.join(', ')}`, 
+        life: 9000 
+    });
+    return;
+}
+
+
     if (subSection.id) {
         // Update single subSection
         axiosClient
@@ -89,14 +133,15 @@ function saveSubSection() {
                 subSectionInputs.value = [{ name: '' }];
             })
             .catch((error) => {
-                console.error('updateSubSection error:', error.response?.data || error.message);
-                toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update subSection', life: 3000 });
+                const message = error.response?.data?.message || 'Failed to update subSection';
+                console.error('updateSubSection error:', message);
+                toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
             });
     } else {
         // Create multiple subSections
         const payload = {
             section_id: selectedSection.value,
-            sub_sections: subSectionInputs.value.filter((sub) => sub.name?.trim()).map((sub) => ({ name: sub.name.trim() }))
+            sub_sections: inputs.map(sub => ({ name: sub.name.trim() }))
         };
 
         axiosClient
@@ -109,8 +154,9 @@ function saveSubSection() {
                 subSectionInputs.value = [{ name: '' }];
             })
             .catch((error) => {
-                console.error('saveSubSection error:', error.response?.data || error.message);
-                toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save subSections', life: 3000 });
+                const message = error.response?.data?.message || 'Failed to save subSections';
+                console.error('saveSubSection error:', message);
+                toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
             });
     }
 }
@@ -225,17 +271,17 @@ function viewSubSections(sectionId) {
         </Toolbar>
 
       <DataTable
-    ref="dt"
-    :value="groupedSubSections"
-    v-model:selection="selectedSubSections"
-    selectionMode="multiple"
-    dataKey="id"
-    :paginator="true"
-    :rows="10"
-    :rowsPerPageOptions="[5, 10, 25]"
-    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subSections"
-    :filters="filters"                         
-    :globalFilter="filters.global.value"        
+  ref="dt"
+  :value="groupedSubSections"
+  v-model:selection="selectedSubSections"
+  selectionMode="multiple"
+  dataKey="id"
+  :paginator="true"
+  :rows="10"
+  :rowsPerPageOptions="[5, 10, 25]"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subSections"
+  :filters="filters"
+  :globalFilterFields="['section_name', 'sub_section_name']"
 >
     <template #header>
         <div class="flex justify-between items-center">
@@ -243,7 +289,7 @@ function viewSubSections(sectionId) {
             <div class="flex items-center gap-2">
                
                 <span class="p-input-icon-left">
-                    <InputText v-model="filters['global'].value" placeholder="Search Sub Section..." />
+                    <InputText v-model="filters['global'].value" placeholder="Search..." />
                 </span>
             </div>
         </div>
@@ -258,7 +304,7 @@ function viewSubSections(sectionId) {
   </template>
 </Column>
 
-<Column header="Section Name" style="width: 20rem">
+<Column field="section_name" header="Section Name" style="width: 20rem">
   <template #body="slotProps">
     <span v-if="slotProps.data._showSection" style="font-weight: bold;">
       {{ slotProps.data.section_name }}
@@ -267,7 +313,7 @@ function viewSubSections(sectionId) {
 </Column>
 
 
-<Column header="Sub Section Name">
+<Column field="sub_section_name" header="Sub Section Name">
   <template #body="slotProps">
     {{ slotProps.data._srNo }}.{{ slotProps.data._subNo }})&nbsp;{{ slotProps.data.sub_section_name }}
   </template>
@@ -337,7 +383,7 @@ function viewSubSections(sectionId) {
 
 
         <!-- Create/Edit Dialog -->
-        <Dialog v-model:visible="subSectionDialog" :draggable="false" modal header="Sub Section Details" :closable="false" style="width: 40vw">
+        <Dialog v-model:visible="subSectionDialog" :draggable="true" modal header="Sub Section Details" :closable="false" style="width: 40vw">
             <div class="p-4">
                 <!-- Section Dropdown -->
                 <div class="mb-4">
