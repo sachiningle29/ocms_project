@@ -22,18 +22,22 @@ class HiringContractController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
-        
-        $validated = $request->validate([
-            // 'rid' => 'nullable|string|max:255',
-            'title' => 'required|string|max:255',
-            'deliverables' => 'required|string',
-            'indenting_section' => 'required|string|max:255',
-            'indentor_do' => 'required|string|max:255',
-            'value_inr' => 'required|numeric',
+        $status = $request->input('current_status');
 
-            // Each date field now has 3 parts
+        // Base validation rules
+        $rules = [
+            'current_status' => 'nullable|integer',
+
+            'title' => 'nullable|string|max:255',
+            'deliverables' => 'nullable|string',
+            'indenting_section' => 'nullable|string|max:255',
+            'indentor_do' => 'nullable|string|max:255',
+            'value_inr' => 'nullable|numeric',
+
+            // Date fields
             'reqmt_recd_expected_date' => 'nullable|date',
             'reqmt_recd_actual_date' => 'nullable|date',
             'reqmt_recd_notes' => 'nullable|string',
@@ -82,6 +86,7 @@ class HiringContractController extends Controller
             'contract_end_actual_date' => 'nullable|date|after_or_equal:contract_start_actual_date',
             'contract_end_notes' => 'nullable|string',
 
+            // Misc fields
             'vendor_type' => ['nullable', Rule::in(['OEM', 'Non-OEM'])],
             'tender_do' => 'nullable|string|max:255',
             'tender_type' => 'nullable|string|max:255',
@@ -96,10 +101,23 @@ class HiringContractController extends Controller
             'physical_progress' => 'nullable|string|max:255',
             'addl_dealing_officer' => 'nullable|string|max:255',
             'status' => ['nullable', Rule::in(['active', 'closed', 'on_hold'])],
-        ]);
+        ];
+
+        // Add conditional required fields when current_status is 1
+        if ($status == 1) {
+            $rules['title'] = 'required|string|max:255';
+            $rules['deliverables'] = 'required|string';
+            $rules['indenting_section'] = 'required|string|max:255';
+            $rules['indentor_do'] = 'required|string|max:255';
+            $rules['value_inr'] = 'required|numeric';
+        }
+
+        $validated = $request->validate($rules);
+
         if (!isset($validated['status'])) {
             $validated['status'] = 'active';
         }
+
         $validated['rid'] = 'RID' . time() . rand(100, 999);
 
         $contract = HiringContract::create($validated);
