@@ -13,6 +13,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminUserSeeder::class,
         ]);
+        $this->call([
+            MasterStatusSeeder::class,
+        ]);
 
         // Regular test user with complete fields
    /*     User::factory()->create([

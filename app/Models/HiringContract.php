@@ -16,22 +16,27 @@ class HiringContract extends Model
 
         'reqmt_recd_expected_date',
         'reqmt_recd_actual_date',
+        'reqmt_recd_norm_date',
         'reqmt_recd_notes',
 
         'case_initiation_expected_date',
         'case_initiation_actual_date',
+        'case_initiation_norm_date',
         'case_initiation_notes',
 
         'aa_expected_date',
         'aa_actual_date',
+        'aa_norm_date',
         'aa_notes',
 
         'sanction_expected_date',
         'sanction_actual_date',
+        'sanction_norm_date',
         'sanction_notes',
 
         'indent_expected_date',
         'indent_actual_date',
+        'indent_norm_date',
         'indent_notes',
 
         'nit_expected_date',
@@ -75,6 +80,7 @@ class HiringContract extends Model
         'contractor_name',
         'physical_progress',
         'addl_dealing_officer',
-        'status'
+        'status',
+        'current_status'
     ];
 }
