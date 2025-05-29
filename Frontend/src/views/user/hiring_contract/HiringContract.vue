@@ -585,12 +585,12 @@ function deleteSelectedContracts() {
 </script>
 
 <template>
-        
+
 
     <div class="card">
-         <div class="flex justify-content-between align-items-center mb-3">
-                        <h4 class="m-0">Hiring Contracts</h4>
-                    </div>
+        <div class="flex justify-content-between align-items-center mb-3">
+            <h4 class="m-0">Hiring Contracts</h4>
+        </div>
         <Toolbar class="mb-4">
             <template #start>
                 <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
@@ -599,79 +599,60 @@ function deleteSelectedContracts() {
             </template>
         </Toolbar>
 
-        <DataTable
-            ref="dt"
-            v-model:selection="selectedContracts"
-            :value="contracts"
-            dataKey="id"
-            :paginator="true"
-            :rows="10"
-            :filters="filters"
-            :rowsPerPageOptions="[5, 10, 25]"
-            filterDisplay="menu"
+        <DataTable ref="dt" v-model:selection="selectedContracts" :value="contracts" dataKey="id" :paginator="true"
+            :rows="10" :filters="filters" :rowsPerPageOptions="[5, 10, 25]" filterDisplay="menu"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-        >
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown">
             <template #header>
                 <div class="flex flex-column gap-2">
-               
+
                     <div class="flex flex-wrap align-items-center gap-3 p-2 surface-100 border-round">
                         <!-- RID Filter -->
                         <div style="min-width: 200px">
                             <span class="p-float-label">
-                                <InputText placeholder="RID" v-model="filters.rid.value" class="w-full" @input="dt.filter($event.value, 'rid', 'contains')" id="ridFilter" />
-                               
+                                <InputText placeholder="RID" v-model="filters.rid.value" class="w-full"
+                                    @input="dt.filter($event.value, 'rid', 'contains')" id="ridFilter" />
+
                             </span>
                         </div>
 
                         <!-- Title Filter -->
                         <div style="min-width: 200px">
                             <span class="p-float-label">
-                                <InputText placeholder="Title" v-model="filters.title.value" class="w-full" @input="dt.filter($event.value, 'title', 'contains')" id="titleFilter" />
-                               
+                                <InputText placeholder="Title" v-model="filters.title.value" class="w-full"
+                                    @input="dt.filter($event.value, 'title', 'contains')" id="titleFilter" />
+
                             </span>
                         </div>
 
                         <!-- Deliverables Filter -->
                         <div style="min-width: 200px">
-                            <Dropdown
-                                v-model="filters.deliverables.value"
-                                :options="deliverablesOptions"
-                                optionLabel="label"
-                                optionValue="value"
-                                placeholder="Deliverables"
-                                class="w-full"
-                                @change="dt.filter($event.value, 'deliverables', 'equals')"
-                                :showClear="true"
-                                id="deliverablesFilter"
-                            />
+                            <Dropdown v-model="filters.deliverables.value" :options="deliverablesOptions"
+                                optionLabel="label" optionValue="value" placeholder="Deliverables" class="w-full"
+                                @change="dt.filter($event.value, 'deliverables', 'equals')" :showClear="true"
+                                id="deliverablesFilter" />
                         </div>
 
                         <!-- Tendering Section Filter -->
                         <div style="min-width: 200px">
-                            <Dropdown
-                                v-model="filters.tendering_section.value"
-                                :options="tenderingSectionOptions"
-                                optionLabel="label"
-                                optionValue="value"
-                                placeholder="Tendering Section"
-                                class="w-full"
-                                @change="dt.filter($event.value, 'tendering_section', 'equals')"
-                                :showClear="true"
-                                id="tenderingFilter"
-                            />
+                            <Dropdown v-model="filters.tendering_section.value" :options="tenderingSectionOptions"
+                                optionLabel="label" optionValue="value" placeholder="Tendering Section" class="w-full"
+                                @change="dt.filter($event.value, 'tendering_section', 'equals')" :showClear="true"
+                                id="tenderingFilter" />
                         </div>
-                         <div class="flex align-items-center gap-3">
+                        <div class="flex align-items-center gap-3">
                             <span class="p-input-icon-left" style="min-width: 250px">
                                 <i class="pi pi-search" />
-                                <InputText v-model="filters.global.value" placeholder="Global Search..." @input="dt.filter($event.value, 'global', 'contains')" class="w-full" />
+                                <InputText v-model="filters.global.value" placeholder="Global Search..."
+                                    @input="dt.filter($event.value, 'global', 'contains')" class="w-full" />
                             </span>
-                            <Button label="Clear" icon="pi pi-filter-slash" severity="warning" @click="clearFilters()" class="p-button-text" />
+                            <Button label="Clear" icon="pi pi-filter-slash" severity="warning" @click="clearFilters()"
+                                class="p-button-text" />
                         </div>
                     </div>
 
 
-                    
+
                 </div>
             </template>
 
@@ -810,121 +791,129 @@ function deleteSelectedContracts() {
                             <div class="col-span-2">Actual Date</div>
                             <div class="col-span-4">Notes</div>
                         </div>
-                <!-- Indenting Section -->
-                <fieldset class="border rounded p-4">
-                    <legend class="font-semibold text-lg mb-2">Indenting</legend>
+                        <!-- Indenting Section -->
+                        <fieldset class="border rounded p-4">
+                            <legend class="font-semibold text-lg mb-2">Indenting</legend>
 
-                    <!-- Date Fields -->
-                    <div class="mt-4">
-                        <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
-                            <div class="col-span-4">Field Name</div>
-                            <div class="col-span-2">Expected Date</div>
-                            <div class="col-span-2">Actual Date</div>
-                            <div class="col-span-4">Notes</div>
-                        </div>
+                            <!-- Date Fields -->
+                            <div class="mt-4">
+                                <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
+                                    <div class="col-span-4">Field Name</div>
+                                    <div class="col-span-2">Expected Date</div>
+                                    <div class="col-span-2">Actual Date</div>
+                                    <div class="col-span-4">Notes</div>
+                                </div>
 
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">Reqmt Recd Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.reqmt_recd_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.reqmt_recd_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.reqmt_recd_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">Reqmt Recd Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.reqmt_recd_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.reqmt_recd_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.reqmt_recd_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">Reqmt Recd Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.reqmt_recd_date_expected" class="w-full"
+                                            readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.reqmt_recd_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.reqmt_recd_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">Reqmt Recd Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.reqmt_recd_date_expected" class="w-full"
+                                            readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.reqmt_recd_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.reqmt_recd_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
 
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">Case Initiation Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.case_initiation_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.case_initiation_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.case_initiation_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">Case Initiation Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.case_initiation_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.case_initiation_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.case_initiation_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">Case Initiation Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.case_initiation_date_expected" class="w-full"
+                                            readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.case_initiation_date_actual" class="w-full"
+                                            readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.case_initiation_date_notes" class="w-full"
+                                            readonly />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">Case Initiation Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.case_initiation_date_expected" class="w-full"
+                                            readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.case_initiation_date_actual" class="w-full"
+                                            readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.case_initiation_date_notes" class="w-full"
+                                            readonly />
+                                    </div>
+                                </div>
 
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">AA Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.aa_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.aa_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.aa_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">AA Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.aa_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.aa_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.aa_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
 
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">Sanction Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.sanction_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.sanction_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.sanction_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">Sanction Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.sanction_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.sanction_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.sanction_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">Sanction Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.sanction_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.sanction_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.sanction_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">Sanction Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.sanction_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.sanction_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.sanction_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
 
-                        <div class="grid grid-cols-12 gap-2 items-center">
-                            <div class="col-span-4">Indent Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.indent_date_expected" class="w-full" readonly />
+                                <div class="grid grid-cols-12 gap-2 items-center">
+                                    <div class="col-span-4">Indent Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.indent_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.indent_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.indent_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.indent_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.indent_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
+                        </fieldset>
                         <div class="grid grid-cols-12 gap-2 items-center">
                             <div class="col-span-4">Indent Date</div>
                             <div class="col-span-2">
@@ -962,204 +951,207 @@ function deleteSelectedContracts() {
                             <InputText v-model="contract.post_contract" class="w-full" readonly />
                         </div>
                     </div>
-                <!-- Tendering Section -->
-                <fieldset class="border rounded p-4">
-                    <legend class="font-semibold text-lg mb-2">Tendering</legend>
+                    <!-- Tendering Section -->
+                   
+                        <legend class="font-semibold text-lg mb-2">Tendering</legend>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Vendor Type</label>
-                            <InputText v-model="contract.vendor_type" class="w-full" readonly />
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Vendor Type</label>
+                                <InputText v-model="contract.vendor_type" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Tender DO</label>
+                                <InputText v-model="contract.tender_do" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Tender Type</label>
+                                <InputText v-model="contract.tender_type" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Post Contract</label>
+                                <InputText v-model="contract.post_contract" class="w-full" readonly />
+                            </div>
                         </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Tender DO</label>
-                            <InputText v-model="contract.tender_do" class="w-full" readonly />
+
+                        <!-- Date Fields -->
+                        <div class="mt-4">
+                            <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
+                                <div class="col-span-4">Field Name</div>
+                                <div class="col-span-2">Expected Date</div>
+                                <div class="col-span-2">Actual Date</div>
+                                <div class="col-span-4">Notes</div>
+                            </div>
+
+                            <!-- Date Fields -->
+                            <div class="mt-4">
+                                <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
+                                    <div class="col-span-4">Field Name</div>
+                                    <div class="col-span-2">Expected Date</div>
+                                    <div class="col-span-2">Actual Date</div>
+                                    <div class="col-span-4">Notes</div>
+                                </div>
+
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">NIT Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.nit_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.nit_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.nit_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">NIT Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.nit_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.nit_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.nit_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">TBO Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.tbo_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.tbo_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.tbo_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">PBO Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.pbo_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.pbo_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.pbo_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                    <div class="col-span-4">NOA/PO Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.noa_po_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.noa_po_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.noa_po_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-12 gap-2 items-center">
+                                    <div class="col-span-4">Delivery Date</div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.delivery_date_expected" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-2">
+                                        <InputText v-model="contract.delivery_date_actual" class="w-full" readonly />
+                                    </div>
+                                    <div class="col-span-4">
+                                        <InputText v-model="contract.delivery_date_notes" class="w-full" readonly />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Tender Type</label>
-                            <InputText v-model="contract.tender_type" class="w-full" readonly />
+                    </fieldset>
+
+                    <!-- Miscellaneous Section -->
+                    <fieldset class="border rounded p-4">
+                        <legend class="font-semibold text-lg mb-2">Miscellaneous</legend>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">PR No.</label>
+                                <InputText v-model="contract.pr_no" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Method</label>
+                                <InputText v-model="contract.method" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Contract/PO No.</label>
+                                <InputText v-model="contract.contract_no" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Sanction (PR) Value (Cr.) (INR)</label>
+                                <InputText v-model="contract.sanction_value_cr" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Percentage Above/Below</label>
+                                <InputText v-model="contract.percentage_above_below" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Contractor Name</label>
+                                <InputText v-model="contract.contractor_name" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Physical Progress (%)</label>
+                                <InputText v-model="contract.physical_progress" class="w-full" readonly />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Status</label>
+                                <InputText v-model="contract.status" class="w-full" readonly />
+                            </div>
                         </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Post Contract</label>
-                            <InputText v-model="contract.post_contract" class="w-full" readonly />
+
+                        <!-- Contract Date Fields -->
+                        <div class="mt-4">
+                            <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
+                                <div class="col-span-4">Field Name</div>
+                                <div class="col-span-2">Expected Date</div>
+                                <div class="col-span-2">Actual Date</div>
+                                <div class="col-span-4">Notes</div>
+                            </div>
+
+                            <div class="grid grid-cols-12 gap-2 items-center mb-3">
+                                <div class="col-span-4">Contract Start Date</div>
+                                <div class="col-span-2">
+                                    <InputText v-model="contract.contract_start_date_expected" class="w-full"
+                                        readonly />
+                                </div>
+                                <div class="col-span-2">
+                                    <InputText v-model="contract.contract_start_date_actual" class="w-full" readonly />
+                                </div>
+                                <div class="col-span-4">
+                                    <InputText v-model="contract.contract_start_date_notes" class="w-full" readonly />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-4">Contract End Date</div>
+                                <div class="col-span-2">
+                                    <InputText v-model="contract.contract_end_date_expected" class="w-full" readonly />
+                                </div>
+                                <div class="col-span-2">
+                                    <InputText v-model="contract.contract_end_date_actual" class="w-full" readonly />
+                                </div>
+                                <div class="col-span-4">
+                                    <InputText v-model="contract.contract_end_date_notes" class="w-full" readonly />
+                                </div>
+                            </div>
                         </div>
+                    </fieldset>
+
+                    <div class="flex justify-end mt-6">
+                        <Button label="Close" icon="pi pi-times" @click="viewContractDialog = false" />
                     </div>
-
-                    <!-- Date Fields -->
-                    <div class="mt-4">
-                        <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
-                            <div class="col-span-4">Field Name</div>
-                            <div class="col-span-2">Expected Date</div>
-                            <div class="col-span-2">Actual Date</div>
-                            <div class="col-span-4">Notes</div>
-                        </div>
-                    <!-- Date Fields -->
-                    <div class="mt-4">
-                        <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
-                            <div class="col-span-4">Field Name</div>
-                            <div class="col-span-2">Expected Date</div>
-                            <div class="col-span-2">Actual Date</div>
-                            <div class="col-span-4">Notes</div>
-                        </div>
-
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">NIT Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.nit_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.nit_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.nit_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">NIT Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.nit_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.nit_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.nit_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">TBO Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.tbo_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.tbo_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.tbo_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">PBO Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.pbo_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.pbo_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.pbo_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">NOA/PO Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.noa_po_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.noa_po_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.noa_po_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-12 gap-2 items-center">
-                            <div class="col-span-4">Delivery Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.delivery_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.delivery_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.delivery_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <!-- Miscellaneous Section -->
-                <fieldset class="border rounded p-4">
-                    <legend class="font-semibold text-lg mb-2">Miscellaneous</legend>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">PR No.</label>
-                            <InputText v-model="contract.pr_no" class="w-full" readonly />
-                        </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Method</label>
-                            <InputText v-model="contract.method" class="w-full" readonly />
-                        </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Contract/PO No.</label>
-                            <InputText v-model="contract.contract_no" class="w-full" readonly />
-                        </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Sanction (PR) Value (Cr.) (INR)</label>
-                            <InputText v-model="contract.sanction_value_cr" class="w-full" readonly />
-                        </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Percentage Above/Below</label>
-                            <InputText v-model="contract.percentage_above_below" class="w-full" readonly />
-                        </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Contractor Name</label>
-                            <InputText v-model="contract.contractor_name" class="w-full" readonly />
-                        </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Physical Progress (%)</label>
-                            <InputText v-model="contract.physical_progress" class="w-full" readonly />
-                        </div>
-                        <div class="flex flex-col">
-                            <label class="font-bold mb-1 block">Status</label>
-                            <InputText v-model="contract.status" class="w-full" readonly />
-                        </div>
-                    </div>
-
-                    <!-- Contract Date Fields -->
-                    <div class="mt-4">
-                        <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
-                            <div class="col-span-4">Field Name</div>
-                            <div class="col-span-2">Expected Date</div>
-                            <div class="col-span-2">Actual Date</div>
-                            <div class="col-span-4">Notes</div>
-                        </div>
-
-                        <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                            <div class="col-span-4">Contract Start Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.contract_start_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.contract_start_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.contract_start_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-12 gap-2 items-center">
-                            <div class="col-span-4">Contract End Date</div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.contract_end_date_expected" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-2">
-                                <InputText v-model="contract.contract_end_date_actual" class="w-full" readonly />
-                            </div>
-                            <div class="col-span-4">
-                                <InputText v-model="contract.contract_end_date_notes" class="w-full" readonly />
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <div class="flex justify-end mt-6">
-                    <Button label="Close" icon="pi pi-times" @click="viewContractDialog = false" />
-                </div>
             </div>
         </Dialog>
         <Dialog v-model:visible="contractDialog" modal header="Contract Details" style="width: 70vw" :draggable="false"
