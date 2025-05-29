@@ -135,116 +135,103 @@ const filters = ref({
 const apiBase = '/hiring-contracts';
 
 const validateCreateCase = () => {
-    const createFields = ['title', 'deliverables', 'indenting_section', 'indentor_sub_section', 'indentor_do', 'value_inr', 'vendor_type', 'tender_type'];
+    const requiredFields = [
+        'title',
+        'deliverables',
+        'indenting_section',
+        'indentor_sub_section',
+        'indentor_do',
+        'value_inr',
+        'vendor_type',
+        'tender_type',
+        'tendering_section'
+    ];
 
-    let hasError = false;
-
-    createFields.forEach((field) => {
-        // Reset error first
-        fieldErrors[field] = false;
-
-        // Validate
+    return requiredFields.every(field => {
         const value = contract[field];
-        const isEmpty = typeof value === 'string' ? !value.trim() : !value;
-
-        if (isEmpty) {
-            fieldErrors[field] = true;
-            hasError = true;
-        }
+        return typeof value === 'string' ? !!value.trim() : !!value;
     });
-
-    return !hasError;
 };
 
-const viewContractDialog = ref(false);
-const viewMode = ref(false);
-
-function viewContract(c) {
-    axiosClient
-        .get(`${apiBase}/${c.id}`)
-        .then((res) => {
-            Object.assign(contract, res.data);
-            viewMode.value = true;
-            viewContractDialog.value = true;
-        })
-        .catch(() => {
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load contract', life: 3000 });
-        });
-}
-
-
-
-// Validation functions
+// For Next button - all fields must be filled
 const validateIndenting = () => {
-    const indentingFields = ['title', 'deliverables', 'indenting_section', 'indentor_sub_section', 'indentor_do', 'value_inr', 'vendor_type', 'tender_type', 'tendering_section'];
+    const requiredFields = [
+        'reqmt_recd_date_expected',
+        'case_initiation_date_expected',
+        'aa_date_expected',
+        'sanction_date_expected',
+        'indent_date_expected'
+    ];
 
-    let hasError = false;
-
-    indentingFields.forEach((field) => {
-        fieldErrors[field] = false;
-
-        const value = contract[field];
-        const isEmpty = typeof value === 'string' ? !value.trim() : !value;
-
-        if (isEmpty) {
-            fieldErrors[field] = true;
-            hasError = true;
-        }
-    });
-
-    return !hasError;
+    return requiredFields.every(field => !!contract[field]);
 };
 
+// For Next button - all fields must be filled
 const validateTendering = () => {
-    fieldErrors.vendor_type = false;
-    fieldErrors.tender_do = false;
-    fieldErrors.tender_type = false;
-    fieldErrors.tendering_section = false;
+    const requiredFields = [
+        'tender_do',
+        'nit_date_expected',
+        'tbo_date_expected',
+        'pbo_date_expected',
+        'noa_po_date_expected',
+        'delivery_date_expected'
+    ];
 
-    fieldErrors.vendor_type = !(contract.vendor_type?.trim() || '');
-    fieldErrors.tender_do = !(contract.tender_do?.trim() || '');
-    fieldErrors.tender_type = !(contract.tender_type?.trim() || '');
-    fieldErrors.tendering_section = !(contract.tendering_section?.trim() || '');
-
-    return !Object.values(fieldErrors).some((error) => error);
+    return requiredFields.every(field => !!contract[field]);
 };
 
+// For Final Save button - all fields must be filled
 const validateMisc = () => {
-    fieldErrors.pr_no = false;
-    fieldErrors.method = false;
-    fieldErrors.contract_no = false;
-    fieldErrors.status = false;
+    const requiredFields = [
+        'pr_no',
+        'method',
+        'contract_no',
+        'status',
+        'contract_start_date_expected',
+        'contract_end_date_expected'
+    ];
 
-    fieldErrors.pr_no = !(contract.pr_no?.trim() || '');
-    fieldErrors.method = !(contract.method?.trim() || '');
-    fieldErrors.contract_no = !(contract.contract_no?.trim() || '');
-    fieldErrors.status = !contract.status;
+    return requiredFields.every(field => {
+        const value = contract[field];
+        return typeof value === 'string' ? !!value.trim() : !!value;
+    });
+};
 
-    return !Object.values(fieldErrors).some((error) => error);
+// New validation functions for Save Section button (optional fields)
+const validateIndentingForSave = () => {
+    // All fields are optional for saving
+    return true;
+};
+
+const validateTenderingForSave = () => {
+    // All fields are optional for saving
+    return true;
+};
+
+const validateMiscForSave = () => {
+    // All fields are optional for saving
+    return true;
 };
 
 const isCurrentStepValid = computed(() => {
-    let result;
-
     switch (currentStep.value) {
-        case 1:
-            result = validateCreateCase();
-            break;
-        case 2:
-            result = validateIndenting();
-            break;
-        case 3:
-            result = validateTendering();
-            break;
-        case 4:
-            result = validateMisc();
-            break;
-        default:
-            result = false;
+        case 1: return validateCreateCase();
+        case 2: return validateIndenting();
+        case 3: return validateTendering();
+        case 4: return validateMisc();
+        default: return false;
     }
+});
 
-    console.log('Step', currentStep.value, 'is valid?', result);
-    return result;
+// New computed property for Save Section button validation
+const isCurrentStepValidForSave = computed(() => {
+    switch (currentStep.value) {
+        case 1: return validateCreateCase();
+        case 2: return validateIndentingForSave();
+        case 3: return validateTenderingForSave();
+        case 4: return validateMiscForSave();
+        default: return false;
+    }
 });
 
 const loadUserSection = async () => {
@@ -357,21 +344,13 @@ function openNew() {
 }
 
 const nextStep = () => {
-    // Validate current step before proceeding
-    const isValid = isCurrentStepValid.value;
-
-    if (isValid && currentStep.value < 4) {
-        // Changed from 3 to 4 since you have 4 steps
+    if (isCurrentStepValid.value && currentStep.value < 4) {
         currentStep.value++;
-        // Reset validation errors for the next step
-        Object.keys(fieldErrors).forEach((key) => {
-            fieldErrors[key] = false;
-        });
-    } else if (!isValid) {
+    } else if (!isCurrentStepValid.value) {
         toast.add({
             severity: 'warn',
             summary: 'Validation',
-            detail: 'Please fill all required fields',
+            detail: 'Please fill all required fields before proceeding',
             life: 3000
         });
     }
@@ -432,103 +411,57 @@ function saveContract() {
 }
 
 const saveSection = () => {
-    if (isCurrentStepValid.value) {
-        const payload = { ...contract };
+    const payload = { ...contract };
 
-        // Only send fields relevant to the current section
-        const sectionFields = {
-            1: ['title', 'deliverables', 'indenting_section', 'indentor_sub_section', 'indentor_do', 'value_inr', 'vendor_type', 'tender_type'],
-            2: [
-                'reqmt_recd_date_expected',
-                'reqmt_recd_date_actual',
-                'reqmt_recd_date_notes',
-                'case_initiation_date_expected',
-                'case_initiation_date_actual',
-                'case_initiation_date_notes',
-                'aa_date_expected',
-                'aa_date_actual',
-                'aa_date_notes',
-                'sanction_date_expected',
-                'sanction_date_actual',
-                'sanction_date_notes',
-                'indent_date_expected',
-                'indent_date_actual',
-                'indent_date_notes'
-            ],
-            3: [
-                'tendering_section',
-                'tender_do',
-                'post_contract',
-                'nit_date_expected',
-                'nit_date_actual',
-                'nit_date_notes',
-                'tbo_date_expected',
-                'tbo_date_actual',
-                'tbo_date_notes',
-                'pbo_date_expected',
-                'pbo_date_actual',
-                'pbo_date_notes',
-                'noa_po_date_expected',
-                'noa_po_date_actual',
-                'noa_po_date_notes',
-                'delivery_date_expected',
-                'delivery_date_actual',
-                'delivery_date_notes'
-            ],
-            4: [
-                'pr_no',
-                'method',
-                'contract_no',
-                'sanction_value_cr',
-                'percentage_above_below',
-                'contractor_name',
-                'physical_progress',
-                'status',
-                'contract_start_date_expected',
-                'contract_start_date_actual',
-                'contract_start_date_notes',
-                'contract_end_date_expected',
-                'contract_end_date_actual',
-                'contract_end_date_notes'
-            ]
-        };
+    // Only send fields relevant to the current section
+    const sectionFields = {
+        1: ['title', 'deliverables', 'indenting_section', 'indentor_sub_section',
+            'indentor_do', 'value_inr', 'vendor_type', 'tender_type'],
+        2: ['reqmt_recd_date_expected', 'reqmt_recd_date_actual', 'reqmt_recd_date_notes',
+            'case_initiation_date_expected', 'case_initiation_date_actual', 'case_initiation_date_notes',
+            'aa_date_expected', 'aa_date_actual', 'aa_date_notes', 'sanction_date_expected',
+            'sanction_date_actual', 'sanction_date_notes', 'indent_date_expected',
+            'indent_date_actual', 'indent_date_notes'],
+        3: ['tendering_section', 'tender_do', 'post_contract', 'nit_date_expected',
+            'nit_date_actual', 'nit_date_notes', 'tbo_date_expected', 'tbo_date_actual',
+            'tbo_date_notes', 'pbo_date_expected', 'pbo_date_actual', 'pbo_date_notes',
+            'noa_po_date_expected', 'noa_po_date_actual', 'noa_po_date_notes',
+            'delivery_date_expected', 'delivery_date_actual', 'delivery_date_notes'],
+        4: ['pr_no', 'method', 'contract_no', 'sanction_value_cr', 'percentage_above_below',
+            'contractor_name', 'physical_progress', 'status', 'contract_start_date_expected',
+            'contract_start_date_actual', 'contract_start_date_notes', 'contract_end_date_expected',
+            'contract_end_date_actual', 'contract_end_date_notes']
+    };
 
-        const filteredPayload = {};
-        sectionFields[currentStep.value].forEach((field) => {
-            filteredPayload[field] = payload[field];
-        });
+    const filteredPayload = {};
+    sectionFields[currentStep.value].forEach(field => {
+        filteredPayload[field] = payload[field];
+    });
 
-        const request = contract.id ? axiosClient.patch(`${apiBase}/${contract.id}`, filteredPayload) : axiosClient.post(apiBase, filteredPayload);
+    const request = contract.id
+        ? axiosClient.patch(`${apiBase}/${contract.id}`, filteredPayload)
+        : axiosClient.post(apiBase, filteredPayload);
 
-        request
-            .then(() => {
-                toast.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: `Section ${currentStep.value} saved successfully`,
-                    life: 3000
-                });
-                if (!contract.id) {
-                    loadContracts(); // Reload to get the ID if it's a new contract
-                }
-            })
-            .catch(() => {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Failed to save section',
-                    life: 3000
-                });
-            });
-    } else {
+    request.then(() => {
         toast.add({
-            severity: 'warn',
-            summary: 'Validation',
-            detail: 'Please fill all required fields',
+            severity: 'success',
+            summary: 'Success',
+            detail: `Section ${currentStep.value} saved successfully`,
             life: 3000
         });
-    }
+        if (!contract.id) {
+            loadContracts(); // Reload to get the ID if it's a new contract
+        }
+    }).catch(() => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to save section',
+            life: 3000
+        });
+    });
 };
+
 
 const editContract = (c) => {
     currentStep.value = 1;
@@ -1356,9 +1289,12 @@ function deleteSelectedContracts() {
                 <div class="flex justify-between space-x-3 mt-6">
                     <Button label="Previous" icon="pi pi-arrow-left" @click="previousStep" :disabled="currentStep === 1" v-if="currentStep > 1" />
                     <div v-else></div>
-                    <Button label="Save Section" icon="pi pi-check" @click="saveSection" :disabled="!isCurrentStepValid" />
-                    <Button v-if="currentStep < 3" label="Next" icon="pi pi-arrow-right" iconPos="right" @click="nextStep" :disabled="!isCurrentStepValid" />
-                    <Button v-else label="Save" icon="pi pi-check" @click="saveContract" :disabled="!isCurrentStepValid" />
+
+                    <Button label="Save Section" icon="pi pi-check" @click="saveSection" />
+
+                    <Button v-if="currentStep < 4" label="Next" icon="pi pi-arrow-right" iconPos="right"
+                        @click="nextStep" :disabled="!isCurrentStepValid" />
+                    <Button v-else label="Final Save" icon="pi pi-check" @click="saveContract" />
                 </div>
             </div>
         </Dialog>

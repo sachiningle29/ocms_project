@@ -24,13 +24,14 @@ class HiringContractController extends Controller
      */
     public function store(Request $request)
     {
+        
         $validated = $request->validate([
             // 'rid' => 'nullable|string|max:255',
             'title' => 'required|string|max:255',
-            'deliverables' => 'nullable|string',
-            'indenting_section' => 'nullable|string|max:255',
-            'indentor_do' => 'nullable|string|max:255',
-            'value_inr' => 'nullable|numeric',
+            'deliverables' => 'required|string',
+            'indenting_section' => 'required|string|max:255',
+            'indentor_do' => 'required|string|max:255',
+            'value_inr' => 'required|numeric',
 
             // Each date field now has 3 parts
             'reqmt_recd_expected_date' => 'nullable|date',
@@ -122,8 +123,8 @@ class HiringContractController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'rid' => 'nullable|string|max:255',
-            'title' => 'required|string|max:255',
+            // 'rid' => 'nullable|string|max:255',
+            'title' => 'nullable|string|max:255',
             'deliverables' => 'nullable|string',
             'indenting_section' => 'nullable|string|max:255',
             'indentor_do' => 'nullable|string|max:255',
