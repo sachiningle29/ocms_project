@@ -23,8 +23,11 @@ const contract = reactive({
     contractor_name: '',
     deliverables: '',
     indenting_section: '',
+    indentor_sub_section: '', // New field
     indentor_do: '',
     value_inr: '',
+    vendor_type: '', // Moved to section 1
+    tender_type: '', // Moved to section 1
     reqmt_recd_date_expected: '',
     reqmt_recd_date_actual: '',
     reqmt_recd_date_notes: '',
@@ -40,9 +43,7 @@ const contract = reactive({
     indent_date_expected: '',
     indent_date_actual: '',
     indent_date_notes: '',
-    vendor_type: '',
     tender_do: '',
-    tender_type: '',
     tendering_section: '',
     nit_date_expected: '',
     nit_date_actual: '',
@@ -82,14 +83,16 @@ const fieldErrors = reactive({
     indenting_section: false,
     indentor_do: false,
     value_inr: false,
+    vendor_type: false,
+    tender_type: false,
     contractor_name: false,
     tender_do: false,
-    tender_type: false,
     tendering_section: false,
     pr_no: false,
     method: false,
     contract_no: false,
-    status: false
+    status: false,
+
 });
 
 const statusOptions = [
@@ -114,49 +117,172 @@ const tenderTypeOptions = [
     { label: 'Open', value: 'Open' }
 ];
 
+const indentorSubSectionOptions = [
+    { label: 'Sub Section A', value: 'A' },
+    { label: 'Sub Section B', value: 'B' },
+    { label: 'Sub Section C', value: 'C' }
+];
+
+const tenderingSectionOptions = [
+    { label: 'CPD', value: 'CPD' },
+    { label: 'P&C', value: 'P&C' },
+    { label: 'MM', value: 'MM' }
+];
+
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
 const apiBase = '/hiring-contracts';
 
+const validateCreateCase = () => {
+    const createFields = [
+        'title',
+        'deliverables',
+        'indenting_section',
+        'indentor_sub_section',
+        'indentor_do',
+        'value_inr',
+        'vendor_type',
+        'tender_type'
+    ];
+
+    let hasError = false;
+
+    createFields.forEach(field => {
+        // Reset error first
+        fieldErrors[field] = false;
+
+        // Validate
+        const value = contract[field];
+        const isEmpty = typeof value === 'string' ? !value.trim() : !value;
+
+        if (isEmpty) {
+            fieldErrors[field] = true;
+            hasError = true;
+        }
+    });
+
+    return !hasError;
+};
+
+
+
 // Validation functions
 const validateIndenting = () => {
-    fieldErrors.title = !contract.title.trim();
-    fieldErrors.deliverables = !contract.deliverables;
-    fieldErrors.indenting_section = !contract.indenting_section.trim();
-    fieldErrors.indentor_do = !contract.indentor_do.trim();
-    fieldErrors.value_inr = !contract.value_inr.trim();
-    return !Object.values(fieldErrors).some(error => error);
+    const indentingFields = [
+        'title',
+        'deliverables',
+        'indenting_section',
+        'indentor_sub_section',
+        'indentor_do',
+        'value_inr',
+        'vendor_type',
+        'tender_type',
+        'tendering_section'
+    ];
+
+    let hasError = false;
+
+    indentingFields.forEach(field => {
+        fieldErrors[field] = false;
+
+        const value = contract[field];
+        const isEmpty = typeof value === 'string' ? !value.trim() : !value;
+
+        if (isEmpty) {
+            fieldErrors[field] = true;
+            hasError = true;
+        }
+    });
+
+    return !hasError;
 };
+
 
 const validateTendering = () => {
-    fieldErrors.vendor_type = !contract.vendor_type.trim();
-    fieldErrors.tender_do = !contract.tender_do.trim();
-    fieldErrors.tender_type = !contract.tender_type;
-    fieldErrors.tendering_section = !contract.tendering_section.trim();
+    fieldErrors.vendor_type = false;
+    fieldErrors.tender_do = false;
+    fieldErrors.tender_type = false;
+    fieldErrors.tendering_section = false;
+
+    fieldErrors.vendor_type = !(contract.vendor_type?.trim() || '');
+    fieldErrors.tender_do = !(contract.tender_do?.trim() || '');
+    fieldErrors.tender_type = !(contract.tender_type?.trim() || '');
+    fieldErrors.tendering_section = !(contract.tendering_section?.trim() || '');
+
     return !Object.values(fieldErrors).some(error => error);
 };
+
 
 const validateMisc = () => {
-    fieldErrors.pr_no = !contract.pr_no.trim();
-    fieldErrors.method = !contract.method.trim();
-    fieldErrors.contract_no = !contract.contract_no.trim();
+    fieldErrors.pr_no = false;
+    fieldErrors.method = false;
+    fieldErrors.contract_no = false;
+    fieldErrors.status = false;
+
+    fieldErrors.pr_no = !(contract.pr_no?.trim() || '');
+    fieldErrors.method = !(contract.method?.trim() || '');
+    fieldErrors.contract_no = !(contract.contract_no?.trim() || '');
     fieldErrors.status = !contract.status;
+
     return !Object.values(fieldErrors).some(error => error);
 };
 
+
 const isCurrentStepValid = computed(() => {
+    let result;
+
     switch (currentStep.value) {
-        case 1: return validateIndenting();
-        case 2: return validateTendering();
-        case 3: return validateMisc();
-        default: return false;
+        case 1:
+            result = validateCreateCase();
+            break;
+        case 2:
+            result = validateIndenting();
+            break;
+        case 3:
+            result = validateTendering();
+            break;
+        case 4:
+            result = validateMisc();
+            break;
+        default:
+            result = false;
     }
+
+    console.log('Step', currentStep.value, 'is valid?', result);
+    return result;
 });
+
+
+
+
+
+const loadUserSection = async () => {
+    try {
+        // Now using the nested resource endpoint
+        const response = await axiosClient.get('/hiring-contracts/section');
+
+        if (response.data.success) {
+            const section = response.data.section;
+            if (section?.name && !contract.tendering_section) {
+                contract.tendering_section = section.name;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading section:', error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to load section information',
+            life: 3000
+        });
+    }
+};
 
 onMounted(() => {
     loadContracts();
+    loadUserSection();
 });
 
 function loadContracts() {
@@ -237,17 +363,42 @@ function openNew() {
 
     submitted.value = false;
     contractDialog.value = true;
+    loadUserSection();
 }
 
 const nextStep = () => {
-    if (currentStep.value < 3 && isCurrentStepValid.value) {
+    // Validate current step before proceeding
+    const isValid = isCurrentStepValid.value;
+
+    if (isValid && currentStep.value < 4) {  // Changed from 3 to 4 since you have 4 steps
         currentStep.value++;
+        // Reset validation errors for the next step
+        Object.keys(fieldErrors).forEach(key => {
+            fieldErrors[key] = false;
+        });
+    } else if (!isValid) {
+        toast.add({
+            severity: 'warn',
+            summary: 'Validation',
+            detail: 'Please fill all required fields',
+            life: 3000
+        });
     }
 };
 
 const previousStep = () => {
     if (currentStep.value > 1) {
         currentStep.value--;
+        // Reset validation errors for the step we're returning to
+        Object.keys(fieldErrors).forEach(key => {
+            fieldErrors[key] = false;
+        });
+        // Force revalidation of the current step
+        switch (currentStep.value) {
+            case 1: validateIndenting(); break;
+            case 2: validateTendering(); break;
+            case 3: validateMisc(); break;
+        }
     }
 };
 
@@ -284,6 +435,67 @@ function saveContract() {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save contract', life: 3000 });
         });
 }
+
+const saveSection = () => {
+    if (isCurrentStepValid.value) {
+        const payload = { ...contract };
+
+        // Only send fields relevant to the current section
+        const sectionFields = {
+            1: ['title', 'deliverables', 'indenting_section', 'indentor_sub_section',
+                'indentor_do', 'value_inr', 'vendor_type', 'tender_type'],
+            2: ['reqmt_recd_date_expected', 'reqmt_recd_date_actual', 'reqmt_recd_date_notes',
+                'case_initiation_date_expected', 'case_initiation_date_actual', 'case_initiation_date_notes',
+                'aa_date_expected', 'aa_date_actual', 'aa_date_notes', 'sanction_date_expected',
+                'sanction_date_actual', 'sanction_date_notes', 'indent_date_expected',
+                'indent_date_actual', 'indent_date_notes'],
+            3: ['tendering_section', 'tender_do', 'post_contract', 'nit_date_expected',
+                'nit_date_actual', 'nit_date_notes', 'tbo_date_expected', 'tbo_date_actual',
+                'tbo_date_notes', 'pbo_date_expected', 'pbo_date_actual', 'pbo_date_notes',
+                'noa_po_date_expected', 'noa_po_date_actual', 'noa_po_date_notes',
+                'delivery_date_expected', 'delivery_date_actual', 'delivery_date_notes'],
+            4: ['pr_no', 'method', 'contract_no', 'sanction_value_cr', 'percentage_above_below',
+                'contractor_name', 'physical_progress', 'status', 'contract_start_date_expected',
+                'contract_start_date_actual', 'contract_start_date_notes', 'contract_end_date_expected',
+                'contract_end_date_actual', 'contract_end_date_notes']
+        };
+
+        const filteredPayload = {};
+        sectionFields[currentStep.value].forEach(field => {
+            filteredPayload[field] = payload[field];
+        });
+
+        const request = contract.id
+            ? axiosClient.patch(`${apiBase}/${contract.id}`, filteredPayload)
+            : axiosClient.post(apiBase, filteredPayload);
+
+        request.then(() => {
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: `Section ${currentStep.value} saved successfully`,
+                life: 3000
+            });
+            if (!contract.id) {
+                loadContracts(); // Reload to get the ID if it's a new contract
+            }
+        }).catch(() => {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to save section',
+                life: 3000
+            });
+        });
+    } else {
+        toast.add({
+            severity: 'warn',
+            summary: 'Validation',
+            detail: 'Please fill all required fields',
+            life: 3000
+        });
+    }
+};
 
 const editContract = (c) => {
     currentStep.value = 1;
@@ -385,26 +597,32 @@ function deleteSelectedContracts() {
                                 currentStep >= 1 ? 'bg-primary-500 text-white' : 'bg-gray-200']">
                                 1
                             </div>
-                            <span class="text-sm mt-1">Indenting</span>
+                            <span class="text-sm mt-1">Create Case</span>
                         </div>
                         <div class="flex flex-col items-center">
                             <div :class="['w-8 h-8 rounded-full flex items-center justify-center',
                                 currentStep >= 2 ? 'bg-primary-500 text-white' : 'bg-gray-200']">
                                 2
                             </div>
-                            <span class="text-sm mt-1">Tendering</span>
+                            <span class="text-sm mt-1">Indenting</span>
                         </div>
                         <div class="flex flex-col items-center">
                             <div :class="['w-8 h-8 rounded-full flex items-center justify-center',
                                 currentStep >= 3 ? 'bg-primary-500 text-white' : 'bg-gray-200']">
                                 3
                             </div>
+                            <span class="text-sm mt-1">Tendering</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div :class="['w-8 h-8 rounded-full flex items-center justify-center',
+                                currentStep >= 4 ? 'bg-primary-500 text-white' : 'bg-gray-200']">
+                                4
+                            </div>
                             <span class="text-sm mt-1">Miscellaneous</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Indenter Section -->
                 <div v-show="currentStep === 1">
                     <fieldset class="border rounded p-4">
                         <legend class="font-semibold text-lg mb-2">Indenting Section</legend>
@@ -433,6 +651,16 @@ function deleteSelectedContracts() {
                             </div>
 
                             <div class="flex flex-col">
+                                <label for="indentor_sub_section" class="font-bold mb-1 block">Indentor Sub
+                                    Section*</label>
+                                <Dropdown v-model="contract.indentor_sub_section" :options="indentorSubSectionOptions"
+                                    optionLabel="label" optionValue="value" placeholder="Select Sub Section"
+                                    class="w-full" :class="{ 'p-invalid': fieldErrors.indentor_sub_section }" />
+                                <small v-if="fieldErrors.indentor_sub_section" class="p-error">Sub section is
+                                    required</small>
+                            </div>
+
+                            <div class="flex flex-col">
                                 <label for="indentor_do" class="font-bold mb-1 block">Indentor DO*</label>
                                 <InputText v-model="contract.indentor_do" class="w-full"
                                     :class="{ 'p-invalid': fieldErrors.indentor_do }" />
@@ -445,7 +673,41 @@ function deleteSelectedContracts() {
                                     :class="{ 'p-invalid': fieldErrors.value_inr }" />
                                 <small v-if="fieldErrors.value_inr" class="p-error">Value is required</small>
                             </div>
+
+                            <div class="flex flex-col">
+                                <label for="vendor_type" class="font-bold mb-1 block">Vendor Type*</label>
+                                <Dropdown v-model="contract.vendor_type" :options="vendorTypeOptions"
+                                    optionLabel="label" optionValue="value" placeholder="Select Vendor Type"
+                                    class="w-full" :class="{ 'p-invalid': fieldErrors.vendor_type }" />
+                                <small v-if="fieldErrors.vendor_type" class="p-error">Vendor type is required</small>
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label for="tender_type" class="font-bold mb-1 block">Tender Type*</label>
+                                <Dropdown v-model="contract.tender_type" :options="tenderTypeOptions"
+                                    optionLabel="label" optionValue="value" placeholder="Select Tender Type"
+                                    class="w-full" :class="{ 'p-invalid': fieldErrors.tender_type }" />
+                                <small v-if="fieldErrors.tender_type" class="p-error">Tender type is required</small>
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Tendering Section*</label>
+                                <Dropdown v-model="contract.tendering_section" :options="tenderingSectionOptions"
+                                    optionLabel="label" optionValue="value" placeholder="Select Tendering Section"
+                                    class="w-full" :class="{ 'p-invalid': fieldErrors.tendering_section }" />
+                                <small v-if="fieldErrors.tendering_section" class="p-error">
+                                    Tendering section is required
+                                </small>
+                            </div>
                         </div>
+                    </fieldset>
+                </div>
+
+
+                <!-- Indenter Section -->
+                <div v-show="currentStep === 2">
+                    <fieldset class="border rounded p-4">
+                        <legend class="font-semibold text-lg mb-2">Indenting Section</legend>
 
                         <!-- Date Fields Table for Indenter Section -->
                         <div class="mt-6">
@@ -524,10 +786,11 @@ function deleteSelectedContracts() {
                             </div>
                         </div>
                     </fieldset>
+
                 </div>
 
                 <!-- Tender Section -->
-                <div v-show="currentStep === 2">
+                <div v-show="currentStep === 3">
                     <fieldset class="border rounded p-4">
                         <legend class="font-semibold text-lg mb-2">Tendering Section</legend>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -565,13 +828,21 @@ function deleteSelectedContracts() {
                             </div>
 
 
-                            <div class="flex flex-col">
+                            <!-- <div class="flex flex-col">
                                 <label for="tendering_section" class="font-bold mb-1 block">Tendering Section*</label>
                                 <InputText v-model="contract.tendering_section" class="w-full"
                                     :class="{ 'p-invalid': fieldErrors.tendering_section }" />
                                 <small v-if="fieldErrors.tendering_section" class="p-error">Tendering section is
                                     required</small>
-                            </div>
+                            </div> -->
+                            <!-- <div class="flex flex-col">
+                                <label class="font-bold mb-1 block">Tendering Section*</label>
+                                <InputText v-model="contract.tendering_section" class="w-full"
+                                    :class="{ 'p-invalid': fieldErrors.tendering_section }" />
+                                <small v-if="fieldErrors.tendering_section" class="p-error">
+                                    Tendering section is required
+                                </small>
+                            </div> -->
 
                             <div class="flex flex-col">
                                 <label for="post_contract" class="font-bold mb-1 block">Post Contract</label>
@@ -655,13 +926,14 @@ function deleteSelectedContracts() {
                             </div>
                         </div>
                     </fieldset>
+
                 </div>
 
                 <!-- Misc Section -->
-                <div v-show="currentStep === 3">
+                <div v-show="currentStep === 4">
                     <fieldset class="border rounded p-4">
                         <legend class="font-semibold text-lg mb-2">Miscellaneous</legend>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"> 
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <!-- First row of fields -->
                             <div class="flex flex-col">
                                 <label for="pr_no" class="font-bold mb-1 block">PR No.*</label>
@@ -760,13 +1032,15 @@ function deleteSelectedContracts() {
                             </div>
                         </div>
                     </fieldset>
+
                 </div>
 
                 <div class="flex justify-between space-x-3 mt-6">
                     <Button label="Previous" icon="pi pi-arrow-left" @click="previousStep" :disabled="currentStep === 1"
                         v-if="currentStep > 1" />
-                    <div v-else></div> <!-- Empty div to maintain space -->
-
+                    <div v-else></div>
+                    <Button label="Save Section" icon="pi pi-check" @click="saveSection"
+                        :disabled="!isCurrentStepValid" />
                     <Button v-if="currentStep < 3" label="Next" icon="pi pi-arrow-right" iconPos="right"
                         @click="nextStep" :disabled="!isCurrentStepValid" />
                     <Button v-else label="Save" icon="pi pi-check" @click="saveContract"
