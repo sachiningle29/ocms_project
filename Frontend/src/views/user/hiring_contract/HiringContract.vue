@@ -23,29 +23,29 @@ const contract = reactive({
     contractor_name: '',
     deliverables: '',
     indenting_section: '',
-    indentor_sub_section: '', // New field
+    indentor_sub_section: '', 
     indentor_do: '',
     value_inr: '',
-    vendor_type: '', // Moved to section 1
-    tender_type: '', // Moved to section 1
+    vendor_type: '',
+    tender_type: '', 
     reqmt_recd_date_expected: '',
-    reqmt_recd_norm_date: '',
+    reqmt_recd_date_norm: '',
     reqmt_recd_date_actual: '',
     reqmt_recd_date_notes: '',
     case_initiation_date_expected: '',
-    case_initiation_norm_date: '',
+    case_initiation_date_norm: '',
     case_initiation_date_actual: '',
     case_initiation_date_notes: '',
     aa_date_expected: '',
-    aa_norm_date: '',
+    aa_date_norm: '',
     aa_date_actual: '',
     aa_date_notes: '',
     sanction_date_expected: '',
-    sanction_norm_date: '',
+    sanction_date_norm: '',
     sanction_date_actual: '',
     sanction_date_notes: '',
     indent_date_expected: '',
-    indent_norm_date: '',
+    indent_date_norm: '',
     indent_date_actual: '',
     indent_date_notes: '',
     tender_do: '',
@@ -285,23 +285,23 @@ function openNew() {
         indentor_do: '',
         value_inr: '',
         reqmt_recd_date_expected: '',
-        reqmt_recd_norm_date: '',
+        reqmt_recd_date_norm: '',
         reqmt_recd_date_actual: '',
         reqmt_recd_date_notes: '',
         case_initiation_date_expected: '',
-        case_initiation_norm_date: '',
+        case_initiation_date_norm: '',
         case_initiation_date_actual: '',
         case_initiation_date_notes: '',
         aa_date_expected: '',
-        aa_norm_date: '',
+        aa_date_norm: '',
         aa_date_actual: '',
         aa_date_notes: '',
         sanction_date_expected: '',
-        sanction_norm_date: '',
+        sanction_date_norm: '',
         sanction_date_actual: '',
         sanction_date_notes: '',
         indent_date_expected: '',
-        indent_norm_date: '',
+        indent_date_norm: '',
         indent_date_actual: '',
         indent_date_notes: '',
         vendor_type: '',
@@ -1109,80 +1109,104 @@ function deleteSelectedContracts() {
                         <div class="mt-6">
                             <h4 class="font-semibold mb-3">Date Fields</h4>
                             <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
-                                <div class="col-span-4">Field Name</div>
+                                <div class="col-span-3">Field Name</div>
                                 <div class="col-span-2">Expected Date</div>
+                                <div class="col-span-2">Norm Date</div>
                                 <div class="col-span-2">Actual Date</div>
-                                <div class="col-span-4">Notes</div>
+                                <div class="col-span-3">Notes</div>
                             </div>
 
+                            <!-- Reqmt Recd Date -->
                             <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                                <div class="col-span-4">Reqmt Recd Date</div>
+                                <div class="col-span-3">Reqmt Recd Date</div>
                                 <div class="col-span-2">
                                     <InputText v-model="contract.reqmt_recd_date_expected" type="date" class="w-full" />
                                 </div>
                                 <div class="col-span-2">
+                                    <InputText v-model="contract.reqmt_recd_date_norm" type="date" class="w-full" />
+                                </div>
+                                <div class="col-span-2">
                                     <InputText v-model="contract.reqmt_recd_date_actual" type="date" class="w-full" />
                                 </div>
-                                <div class="col-span-4">
+                                <div class="col-span-3">
                                     <InputText v-model="contract.reqmt_recd_date_notes" class="w-full" />
                                 </div>
                             </div>
+
+                            <!-- Case Initiation Date -->
                             <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                                <div class="col-span-4">Case Initiation Date</div>
+                                <div class="col-span-3">Case Initiation Date</div>
                                 <div class="col-span-2">
                                     <InputText v-model="contract.case_initiation_date_expected" type="date"
+                                        class="w-full" />
+                                </div>
+                                <div class="col-span-2">
+                                    <InputText v-model="contract.case_initiation_date_norm" type="date"
                                         class="w-full" />
                                 </div>
                                 <div class="col-span-2">
                                     <InputText v-model="contract.case_initiation_date_actual" type="date"
                                         class="w-full" />
                                 </div>
-                                <div class="col-span-4">
+                                <div class="col-span-3">
                                     <InputText v-model="contract.case_initiation_date_notes" class="w-full" />
                                 </div>
                             </div>
 
+                            <!-- AA Date -->
                             <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                                <div class="col-span-4">AA Date</div>
+                                <div class="col-span-3">AA Date</div>
                                 <div class="col-span-2">
                                     <InputText v-model="contract.aa_date_expected" type="date" class="w-full" />
                                 </div>
                                 <div class="col-span-2">
+                                    <InputText v-model="contract.aa_date_norm" type="date" class="w-full" />
+                                </div>
+                                <div class="col-span-2">
                                     <InputText v-model="contract.aa_date_actual" type="date" class="w-full" />
                                 </div>
-                                <div class="col-span-4">
+                                <div class="col-span-3">
                                     <InputText v-model="contract.aa_date_notes" class="w-full" />
                                 </div>
                             </div>
 
+                            <!-- Sanction Date -->
                             <div class="grid grid-cols-12 gap-2 items-center mb-3">
-                                <div class="col-span-4">Sanction Date</div>
+                                <div class="col-span-3">Sanction Date</div>
                                 <div class="col-span-2">
                                     <InputText v-model="contract.sanction_date_expected" type="date" class="w-full" />
                                 </div>
                                 <div class="col-span-2">
+                                    <InputText v-model="contract.sanction_date_norm" type="date" class="w-full" />
+                                </div>
+                                <div class="col-span-2">
                                     <InputText v-model="contract.sanction_date_actual" type="date" class="w-full" />
                                 </div>
-                                <div class="col-span-4">
+                                <div class="col-span-3">
                                     <InputText v-model="contract.sanction_date_notes" class="w-full" />
                                 </div>
                             </div>
 
+                            <!-- Indent Date -->
                             <div class="grid grid-cols-12 gap-2 items-center">
-                                <div class="col-span-4">Indent Date</div>
+                                <div class="col-span-3">Indent Date</div>
                                 <div class="col-span-2">
                                     <InputText v-model="contract.indent_date_expected" type="date" class="w-full" />
                                 </div>
                                 <div class="col-span-2">
+                                    <InputText v-model="contract.indent_date_norm" type="date" class="w-full" />
+                                </div>
+                                <div class="col-span-2">
                                     <InputText v-model="contract.indent_date_actual" type="date" class="w-full" />
                                 </div>
-                                <div class="col-span-4">
+                                <div class="col-span-3">
                                     <InputText v-model="contract.indent_date_notes" class="w-full" />
                                 </div>
                             </div>
                         </div>
                     </fieldset>
                 </div>
+
 
                 <!-- Tender Section -->
                 <div v-show="currentStep === 3">
