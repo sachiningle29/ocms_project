@@ -37,58 +37,65 @@ class HiringContractController extends Controller
             'value_inr' => 'nullable|numeric',
 
             // Indenting section norm date fields
-            'reqmt_recd_expected_date' => 'nullable|date',
-            'reqmt_recd_actual_date' => 'nullable|date',
+            'reqmt_recd_date_expected_date' => 'nullable|date',
+            'reqmt_recd_date_actual_date' => 'nullable|date',
             'reqmt_recd_norm_date' => 'nullable|date',
-            'reqmt_recd_notes' => 'nullable|string',
+            'reqmt_recd_date_notes' => 'nullable|string',
 
-            'case_initiation_expected_date' => 'nullable|date',
-            'case_initiation_actual_date' => 'nullable|date',
+            'case_initiation_date_expected_date' => 'nullable|date',
+            'case_initiation_date_actual_date' => 'nullable|date',
             'case_initiation_norm_date' => 'nullable|date',
-            'case_initiation_notes' => 'nullable|string',
+            'case_initiation_date_notes' => 'nullable|string',
 
-            'aa_expected_date' => 'nullable|date',
-            'aa_actual_date' => 'nullable|date',
+            'aa_date_expected_date' => 'nullable|date',
+            'aa_date_actual_date' => 'nullable|date',
             'aa_norm_date' => 'nullable|date',
-            'aa_notes' => 'nullable|string',
+            'aa_date_notes' => 'nullable|string',
 
-            'sanction_expected_date' => 'nullable|date',
-            'sanction_actual_date' => 'nullable|date',
+            'sanction_date_expected_date' => 'nullable|date',
+            'sanction_date_actual_date' => 'nullable|date',
             'sanction_norm_date' => 'nullable|date',
-            'sanction_notes' => 'nullable|string',
+            'sanction_date_notes' => 'nullable|string',
 
-            'indent_expected_date' => 'nullable|date',
-            'indent_actual_date' => 'nullable|date',
+            'indent_date_expected_date' => 'nullable|date',
+            'indent_date_actual_date' => 'nullable|date',
             'indent_norm_date' => 'nullable|date',
-            'indent_notes' => 'nullable|string',
+            'indent_date_notes' => 'nullable|string',
 
-            'nit_expected_date' => 'nullable|date',
-            'nit_actual_date' => 'nullable|date',
-            'nit_notes' => 'nullable|string',
+            'nit_date_expected_date' => 'nullable|date',
+            'nit_date_actual_date' => 'nullable|date',
+            'nit_date_norm_date' => 'nullable|date',
+            'nit_date_notes' => 'nullable|string',
 
-            'tbo_expected_date' => 'nullable|date',
-            'tbo_actual_date' => 'nullable|date',
-            'tbo_notes' => 'nullable|string',
+            'tbo_date_expected_date' => 'nullable|date',
+            'tbo_date_actual_date' => 'nullable|date',
+            'tbo_date_norm_date' => 'nullable|date',
+            'tbo_date_notes' => 'nullable|string',
 
-            'pbo_expected_date' => 'nullable|date',
-            'pbo_actual_date' => 'nullable|date',
-            'pbo_notes' => 'nullable|string',
+            'pbo_date_expected_date' => 'nullable|date',
+            'pbo_date_actual_date' => 'nullable|date',
+            'pbo_date_norm_date' => 'nullable|date',
+            'pbo_date_notes' => 'nullable|string',
 
-            'noa_po_expected_date' => 'nullable|date',
-            'noa_po_actual_date' => 'nullable|date',
-            'noa_po_notes' => 'nullable|string',
+            'noa_po_date_expected_date' => 'nullable|date',
+            'noa_po_date_actual_date' => 'nullable|date',
+            'noa_po_date_norm_date' => 'nullable|date',
+            'noa_po_date_notes' => 'nullable|string',
 
-            'delivery_expected_date' => 'nullable|date',
-            'delivery_actual_date' => 'nullable|date',
-            'delivery_notes' => 'nullable|string',
+            'delivery_date_expected_date' => 'nullable|date',
+            'delivery_date_actual_date' => 'nullable|date',
+            'delivery_date_norm_date' => 'nullable|date',
+            'delivery_date_notes' => 'nullable|string',
 
-            'contract_start_expected_date' => 'nullable|date',
-            'contract_start_actual_date' => 'nullable|date',
-            'contract_start_notes' => 'nullable|string',
+            'contract_start_date_expected_date' => 'nullable|date',
+            'contract_start_date_actual_date' => 'nullable|date',
+            'contract_start_date_norm_date' => 'nullable|date',
+            'contract_start_date_notes' => 'nullable|string',
 
-            'contract_end_expected_date' => 'nullable|date',
-            'contract_end_actual_date' => 'nullable|date|after_or_equal:contract_start_actual_date',
-            'contract_end_notes' => 'nullable|string',
+            'contract_end_date_expected_date' => 'nullable|date',
+            'contract_end_date_actual_date' => 'nullable|date|after_or_equal:contract_start_date_actual_date',
+            'contract_end_date_norm_date' => 'nullable|date',
+            'contract_end_date_notes' => 'nullable|string',
 
             // Misc fields
             'vendor_type' => ['nullable', Rule::in(['OEM', 'Non-OEM'])],
@@ -151,60 +158,67 @@ class HiringContractController extends Controller
             'indentor_do' => 'nullable|string|max:255',
             'value_inr' => 'nullable|numeric',
 
-            // Indenting section with norm dates
-            'reqmt_recd_expected_date' => 'nullable|date',
-            'reqmt_recd_actual_date' => 'nullable|date',
+            // Indenter section norm dates
+            'reqmt_recd_date_expected_date' => 'nullable|date',
+            'reqmt_recd_date_actual_date' => 'nullable|date',
             'reqmt_recd_norm_date' => 'nullable|date',
-            'reqmt_recd_notes' => 'nullable|string',
+            'reqmt_recd_date_notes' => 'nullable|string',
 
-            'case_initiation_expected_date' => 'nullable|date',
-            'case_initiation_actual_date' => 'nullable|date',
-            'case_initiation_norm_date' => 'nullable|date',
-            'case_initiation_notes' => 'nullable|string',
+            'case_initiation_date_expected_date' => 'nullable|date',
+            'case_initiation_date_actual_date' => 'nullable|date',
+            'case_initiation_date_norm_date' => 'nullable|date',
+            'case_initiation_date_notes' => 'nullable|string',
 
-            'aa_expected_date' => 'nullable|date',
-            'aa_actual_date' => 'nullable|date',
+            'aa_date_expected_date' => 'nullable|date',
+            'aa_date_actual_date' => 'nullable|date',
             'aa_norm_date' => 'nullable|date',
-            'aa_notes' => 'nullable|string',
+            'aa_date_notes' => 'nullable|string',
 
-            'sanction_expected_date' => 'nullable|date',
-            'sanction_actual_date' => 'nullable|date',
+            'sanction_date_expected_date' => 'nullable|date',
+            'sanction_date_actual_date' => 'nullable|date',
             'sanction_norm_date' => 'nullable|date',
-            'sanction_notes' => 'nullable|string',
+            'sanction_date_notes' => 'nullable|string',
 
-            'indent_expected_date' => 'nullable|date',
-            'indent_actual_date' => 'nullable|date',
+            'indent_date_expected_date' => 'nullable|date',
+            'indent_date_actual_date' => 'nullable|date',
             'indent_norm_date' => 'nullable|date',
-            'indent_notes' => 'nullable|string',
+            'indent_date_notes' => 'nullable|string',
 
-            // Tendering & Contract stages (no norm dates)
-            'nit_expected_date' => 'nullable|date',
-            'nit_actual_date' => 'nullable|date',
-            'nit_notes' => 'nullable|string',
+            // Tender & contract stages (with norm dates)
+            'nit_date_expected_date' => 'nullable|date',
+            'nit_date_actual_date' => 'nullable|date',
+            'nit_date_norm_date' => 'nullable|date',
+            'nit_date_notes' => 'nullable|string',
 
-            'tbo_expected_date' => 'nullable|date',
-            'tbo_actual_date' => 'nullable|date',
-            'tbo_notes' => 'nullable|string',
+            'tbo_date_expected_date' => 'nullable|date',
+            'tbo_date_actual_date' => 'nullable|date',
+            'tbo_date_norm_date' => 'nullable|date',
+            'tbo_date_notes' => 'nullable|string',
 
-            'pbo_expected_date' => 'nullable|date',
-            'pbo_actual_date' => 'nullable|date',
-            'pbo_notes' => 'nullable|string',
+            'pbo_date_expected_date' => 'nullable|date',
+            'pbo_date_actual_date' => 'nullable|date',
+            'pbo_date_norm_date' => 'nullable|date',
+            'pbo_date_notes' => 'nullable|string',
 
-            'noa_po_expected_date' => 'nullable|date',
-            'noa_po_actual_date' => 'nullable|date',
-            'noa_po_notes' => 'nullable|string',
+            'noa_po_date_expected_date' => 'nullable|date',
+            'noa_po_date_actual_date' => 'nullable|date',
+            'noa_po_date_norm_date' => 'nullable|date',
+            'noa_po_date_notes' => 'nullable|string',
 
-            'delivery_expected_date' => 'nullable|date',
-            'delivery_actual_date' => 'nullable|date',
-            'delivery_notes' => 'nullable|string',
+            'delivery_date_expected_date' => 'nullable|date',
+            'delivery_date_actual_date' => 'nullable|date',
+            'delivery_date_norm_date' => 'nullable|date',
+            'delivery_date_notes' => 'nullable|string',
 
-            'contract_start_expected_date' => 'nullable|date',
-            'contract_start_actual_date' => 'nullable|date',
-            'contract_start_notes' => 'nullable|string',
+            'contract_start_date_expected_date' => 'nullable|date',
+            'contract_start_date_actual_date' => 'nullable|date',
+            'contract_start_date_norm_date' => 'nullable|date',
+            'contract_start_date_notes' => 'nullable|string',
 
-            'contract_end_expected_date' => 'nullable|date',
-            'contract_end_actual_date' => 'nullable|date|after_or_equal:contract_start_actual_date',
-            'contract_end_notes' => 'nullable|string',
+            'contract_end_date_expected_date' => 'nullable|date',
+            'contract_end_date_actual_date' => 'nullable|date|after_or_equal:contract_start_date_actual_date',
+            'contract_end_date_norm_date' => 'nullable|date',
+            'contract_end_date_notes' => 'nullable|string',
 
             // Misc fields
             'vendor_type' => ['nullable', Rule::in(['OEM', 'Non-OEM'])],
@@ -221,6 +235,7 @@ class HiringContractController extends Controller
             'physical_progress' => 'nullable|string|max:255',
             'addl_dealing_officer' => 'nullable|string|max:255',
             'status' => ['nullable', Rule::in(['active', 'closed', 'on_hold'])],
+            'current_status' => 'nullable|integer',
         ]);
 
         $contract = HiringContract::findOrFail($id);
@@ -228,6 +243,7 @@ class HiringContractController extends Controller
 
         return response()->json($contract);
     }
+
 
 
     /**
