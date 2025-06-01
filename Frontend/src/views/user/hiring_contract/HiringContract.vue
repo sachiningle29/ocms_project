@@ -3,6 +3,12 @@ import axiosClient from '@/axios';
 import { onMounted, ref, reactive, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from '@primevue/core/api';
+import ContractFilters from '@/components/HiringContracts/ContractFilters.vue';
+import CreateCaseForm from '@/components/HiringContracts/CreateCaseForm.vue';
+import IndentingForm from '@/components/HiringContracts/IndentingForm.vue';
+import TenderingForm from '@/components/HiringContracts/TenderingForm.vue';
+import MiscellaneousForm from '@/components/HiringContracts/MiscellaneousForm.vue';
+// console.log(ContractFilters);
 
 const toast = useToast();
 const dt = ref();
@@ -600,36 +606,36 @@ function deleteSelectedContracts() {
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown">
             <template #header>
                 <div class="flex flex-column gap-2">
-
-                    <div class="flex flex-wrap align-items-center gap-3 p-2 surface-100 border-round">
+                    <ContractFilters v-model:filters="filters" />
+                    <!-- <div class="flex flex-wrap align-items-center gap-3 p-2 surface-100 border-round"> -->
                         <!-- RID Filter -->
-                        <div style="min-width: 200px">
+                        <!-- <div style="min-width: 200px">
                             <span class="p-float-label">
                                 <InputText placeholder="RID" v-model="filters.rid.value" class="w-full"
                                     @input="dt.filter($event.value, 'rid', 'contains')" id="ridFilter" />
 
                             </span>
-                        </div>
+                        </div> -->
 
                         <!-- Title Filter -->
-                        <div style="min-width: 200px">
+                        <!-- <div style="min-width: 200px">
                             <span class="p-float-label">
                                 <InputText placeholder="Title" v-model="filters.title.value" class="w-full"
                                     @input="dt.filter($event.value, 'title', 'contains')" id="titleFilter" />
 
                             </span>
-                        </div>
+                        </div> -->
 
                         <!-- Deliverables Filter -->
-                        <div style="min-width: 200px">
+                        <!-- <div style="min-width: 200px">
                             <Dropdown v-model="filters.deliverables.value" :options="deliverablesOptions"
                                 optionLabel="label" optionValue="value" placeholder="Deliverables" class="w-full"
                                 @change="dt.filter($event.value, 'deliverables', 'equals')" :showClear="true"
                                 id="deliverablesFilter" />
-                        </div>
+                        </div> -->
 
                         <!-- Tendering Section Filter -->
-                        <div style="min-width: 200px">
+                        <!-- <div style="min-width: 200px">
                             <Dropdown v-model="filters.tendering_section.value" :options="tenderingSectionOptions"
                                 optionLabel="label" optionValue="value" placeholder="Tendering Section" class="w-full"
                                 @change="dt.filter($event.value, 'tendering_section', 'equals')" :showClear="true"
@@ -643,8 +649,8 @@ function deleteSelectedContracts() {
                             </span>
                             <Button label="Clear" icon="pi pi-filter-slash" severity="warning" @click="clearFilters()"
                                 class="p-button-text" />
-                        </div>
-                    </div>
+                        </div> -->
+                    <!-- </div> -->
 
 
 
@@ -690,7 +696,8 @@ function deleteSelectedContracts() {
                 </div>
 
                 <!-- Create Case Section -->
-                <fieldset class="border rounded p-4">
+                <CreateCaseForm />
+                <!-- <fieldset class="border rounded p-4">
                     <legend class="font-semibold text-lg mb-2">Create Case</legend>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="flex flex-col">
@@ -730,14 +737,15 @@ function deleteSelectedContracts() {
                             <InputText v-model="contract.tendering_section" class="w-full" readonly />
                         </div>
                     </div>
-                </fieldset>
+                </fieldset> -->
 
                 <!-- Indenting Section -->
-                <fieldset class="border rounded p-4">
-                    <legend class="font-semibold text-lg mb-2">Indenting</legend>
+                <IndentingForm />
+                <!-- <fieldset class="border rounded p-4">
+                    <legend class="font-semibold text-lg mb-2">Indenting</legend> -->
 
                     <!-- Date Fields -->
-                    <div class="mt-4">
+                    <!-- <div class="mt-4">
                         <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
                             <div class="col-span-4">Field Name</div>
                             <div class="col-span-2">Expected Date</div>
@@ -810,10 +818,11 @@ function deleteSelectedContracts() {
                             </div>
                         </div>
                     </div>
-                </fieldset>
+                </fieldset> -->
 
                 <!-- Tendering Section -->
-                <fieldset class="border rounded p-4">
+                <TenderingForm />
+                <!-- <fieldset class="border rounded p-4">
                     <legend class="font-semibold text-lg mb-2">Tendering</legend>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -833,10 +842,10 @@ function deleteSelectedContracts() {
                             <label class="font-bold mb-1 block">Post Contract</label>
                             <InputText v-model="contract.post_contract" class="w-full" readonly />
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Date Fields -->
-                    <div class="mt-4">
+                    <!-- <div class="mt-4">
                         <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
                             <div class="col-span-4">Field Name</div>
                             <div class="col-span-2">Expected Date</div>
@@ -909,10 +918,11 @@ function deleteSelectedContracts() {
                             </div>
                         </div>
                     </div>
-                </fieldset>
+                </fieldset> -->
 
                 <!-- Miscellaneous Section -->
-                <fieldset class="border rounded p-4">
+                <MiscellaneousForm />
+                <!-- <fieldset class="border rounded p-4">
                     <legend class="font-semibold text-lg mb-2">Miscellaneous</legend>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -948,10 +958,10 @@ function deleteSelectedContracts() {
                             <label class="font-bold mb-1 block">Status</label>
                             <InputText v-model="contract.status" class="w-full" readonly />
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Contract Date Fields -->
-                    <div class="mt-4">
+                    <!-- <div class="mt-4">
                         <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
                             <div class="col-span-4">Field Name</div>
                             <div class="col-span-2">Expected Date</div>
@@ -985,7 +995,7 @@ function deleteSelectedContracts() {
                             </div>
                         </div>
                     </div>
-                </fieldset>
+                </fieldset> -->
 
                 <div class="flex justify-end mt-6">
                     <Button label="Close" icon="pi pi-times" @click="viewContractDialog = false" />
