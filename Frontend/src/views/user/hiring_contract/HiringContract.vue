@@ -8,7 +8,6 @@ import CreateCaseForm from '@/components/HiringContracts/CreateCaseForm.vue';
 import IndentingForm from '@/components/HiringContracts/IndentingForm.vue';
 import TenderingForm from '@/components/HiringContracts/TenderingForm.vue';
 import MiscellaneousForm from '@/components/HiringContracts/MiscellaneousForm.vue';
-// console.log(ContractFilters);
 
 const toast = useToast();
 const dt = ref();
