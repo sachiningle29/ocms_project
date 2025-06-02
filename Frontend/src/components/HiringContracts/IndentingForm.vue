@@ -1,11 +1,9 @@
 <template>
   <fieldset class="border rounded p-4">
     <legend class="font-semibold text-lg mb-2">Indenting Section</legend>
-
     <div class="mt-6">
       <h4 class="font-semibold mb-3">Date Fields</h4>
 
-      <!-- Table Header -->
       <div class="grid grid-cols-12 gap-2 mb-2 font-bold">
         <div class="col-span-3">Field Name</div>
         <div class="col-span-2">Expected Date</div>
@@ -14,7 +12,6 @@
         <div class="col-span-3">Notes</div>
       </div>
 
-      <!-- Dynamic Date Fields -->
       <div
         v-for="(field, index) in dateFields"
         :key="index"
@@ -22,33 +19,41 @@
       >
         <div class="col-span-3">{{ field.label }}</div>
 
+        <!-- Expected Date -->
         <div class="col-span-2">
           <InputText
             type="date"
-            v-model="localContract[`${field.name}_expected_date`]"
+            v-model="contract[field.name + '_expected']"
+            class="w-full"
+            v-show="field.includeExpected"
+            :readonly="!field.includeExpected"
+          />
+        </div>
+
+        <!-- Norm Date -->
+        <div class="col-span-2">
+          <InputText
+            type="date"
+            v-model="contract[field.name + '_norm']"
+            class="w-full"
+            v-show="field.includeNorm"
+            :readonly="!field.includeNorm"
+          />
+        </div>
+
+        <!-- Actual Date -->
+        <div class="col-span-2">
+          <InputText
+            type="date"
+            v-model="contract[field.name + '_actual']"
             class="w-full"
           />
         </div>
 
-        <div class="col-span-2">
-          <InputText
-            type="date"
-            v-model="localContract[`${field.name}_norm_date`]"
-            class="w-full"
-          />
-        </div>
-
-        <div class="col-span-2">
-          <InputText
-            type="date"
-            v-model="localContract[`${field.name}_actual_date`]"
-            class="w-full"
-          />
-        </div>
-
+        <!-- Notes -->
         <div class="col-span-3">
           <InputText
-            v-model="localContract[`${field.name}_notes`]"
+            v-model="contract[field.name + '_notes']"
             class="w-full"
           />
         </div>
@@ -61,51 +66,66 @@
 export default {
   name: 'IndentingForm',
   props: {
-    modelValue: {
+    contract: {
       type: Object,
-      required: true
+      required: true,
+      default: () => ({
+        reqmt_recd_date_actual: '',
+        reqmt_recd_date_notes: '',
+        case_initiation_date_expected: '',
+        case_initiation_date_norm: '',
+        case_initiation_date_actual: '',
+        case_initiation_date_notes: '',
+        aa_date_expected: '',
+        aa_date_norm: '',
+        aa_date_actual: '',
+        aa_date_notes: '',
+        sanction_date_expected: '',
+        sanction_date_norm: '',
+        sanction_date_actual: '',
+        sanction_date_notes: '',
+        indent_date_expected: '',
+        indent_date_norm: '',
+        indent_date_actual: '',
+        indent_date_notes: ''
+      })
     }
   },
   data() {
     return {
       dateFields: [
-        { name: 'reqmt_recd_date', label: 'Reqmt Recd Date' },
-        { name: 'case_initiation_date', label: 'Case Initiation Date' },
-        { name: 'aa_date', label: 'AA Date' },
-        { name: 'sanction_date', label: 'Sanction Date' },
-        { name: 'indent_date', label: 'Indent Date' }
-      ],
-      localContract: {}
+        {
+          name: 'reqmt_recd_date',
+          label: 'Reqmt Recd Date',
+          includeExpected: false,
+          includeNorm: false
+        },
+        {
+          name: 'case_initiation_date',
+          label: 'Case Initiation Date',
+          includeExpected: true,
+          includeNorm: true
+        },
+        {
+          name: 'aa_date',
+          label: 'AA Date',
+          includeExpected: true,
+          includeNorm: true
+        },
+        {
+          name: 'sanction_date',
+          label: 'Sanction Date',
+          includeExpected: true,
+          includeNorm: true
+        },
+        {
+          name: 'indent_date',
+          label: 'Indent Date',
+          includeExpected: true,
+          includeNorm: true
+        }
+      ]
     };
-  },
-  watch: {
-    modelValue: {
-      handler(newVal) {
-        const normalizeDate = (dateStr) => {
-          if (!dateStr) return '';
-          return dateStr.split('T')[0].split(' ')[0];
-        };
-
-        let clone = { ...newVal };
-
-        this.dateFields.forEach(field => {
-          ['expected_date', 'norm_date', 'actual_date', 'notes'].forEach(suffix => {
-            const key = `${field.name}_${suffix}`;
-            clone[key] = normalizeDate(clone[key] || '');
-          });
-        });
-
-        this.localContract = clone;
-      },
-      immediate: true,
-      deep: true
-    },
-    localContract: {
-      handler(updated) {
-        this.$emit('update:modelValue', updated);
-      },
-      deep: true
-    }
   }
 };
 </script>
