@@ -16,7 +16,8 @@ class HiringContractController extends Controller
      */
     public function index()
     {
-        return response()->json(HiringContract::all());
+        $contracts = HiringContract::orderBy('created_at', 'desc')->get();
+        return response()->json($contracts);
     }
 
     /**
@@ -151,7 +152,6 @@ class HiringContractController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        dd($request->all());
         $validated = $request->validate([
             'title' => 'nullable|string|max:255',
             'deliverables' => 'nullable|string',

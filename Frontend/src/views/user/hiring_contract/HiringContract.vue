@@ -637,53 +637,6 @@ function deleteSelectedContracts() {
             <template #header>
                 <div class="flex flex-column gap-2">
                     <ContractFilters v-model:filters="filters" />
-                    <!-- <div class="flex flex-wrap align-items-center gap-3 p-2 surface-100 border-round"> -->
-                    <!-- RID Filter -->
-                    <!-- <div style="min-width: 200px">
-                            <span class="p-float-label">
-                                <InputText placeholder="RID" v-model="filters.rid.value" class="w-full"
-                                    @input="dt.filter($event.value, 'rid', 'contains')" id="ridFilter" />
-
-                            </span>
-                        </div> -->
-
-                    <!-- Title Filter -->
-                    <!-- <div style="min-width: 200px">
-                            <span class="p-float-label">
-                                <InputText placeholder="Title" v-model="filters.title.value" class="w-full"
-                                    @input="dt.filter($event.value, 'title', 'contains')" id="titleFilter" />
-
-                            </span>
-                        </div> -->
-
-                    <!-- Deliverables Filter -->
-                    <!-- <div style="min-width: 200px">
-                            <Dropdown v-model="filters.deliverables.value" :options="deliverablesOptions"
-                                optionLabel="label" optionValue="value" placeholder="Deliverables" class="w-full"
-                                @change="dt.filter($event.value, 'deliverables', 'equals')" :showClear="true"
-                                id="deliverablesFilter" />
-                        </div> -->
-
-                    <!-- Tendering Section Filter -->
-                    <!-- <div style="min-width: 200px">
-                            <Dropdown v-model="filters.tendering_section.value" :options="tenderingSectionOptions"
-                                optionLabel="label" optionValue="value" placeholder="Tendering Section" class="w-full"
-                                @change="dt.filter($event.value, 'tendering_section', 'equals')" :showClear="true"
-                                id="tenderingFilter" />
-                        </div>
-                        <div class="flex align-items-center gap-3">
-                            <span class="p-input-icon-left" style="min-width: 250px">
-                                <i class="pi pi-search" />
-                                <InputText v-model="filters.global.value" placeholder="Global Search..."
-                                    @input="dt.filter($event.value, 'global', 'contains')" class="w-full" />
-                            </span>
-                            <Button label="Clear" icon="pi pi-filter-slash" severity="warning" @click="clearFilters()"
-                                class="p-button-text" />
-                        </div> -->
-                    <!-- </div> -->
-
-
-
                 </div>
             </template>
 
@@ -693,7 +646,7 @@ function deleteSelectedContracts() {
                     {{ dt.first + slotProps.index + 1 }}
                 </template>
             </Column>
-            <Column header="RID" field="rid" sortable />
+            <Column header="Case ID" field="rid" sortable />
             <Column header="Title" field="title" sortable />
             <Column header="Vendor" field="contractor_name" sortable />
             <Column header="Status" field="status" sortable />
