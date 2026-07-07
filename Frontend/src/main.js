@@ -9,10 +9,13 @@ import Aura from '@primeuix/themes/aura';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
+import VueApexCharts from 'vue3-apexcharts';
+
 
 import '@/assets/styles.scss';
 
 const app = createApp(App);
+app.component('apexchart', VueApexCharts)
 
 app.use(router);
 app.use(store); // 

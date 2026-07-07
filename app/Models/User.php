@@ -56,4 +56,27 @@ class User extends Authenticatable
     {
         return $this->belongsTo(\App\Models\Section::class);
     }
+
+    public function notificationLinks()
+    {
+        return $this->hasMany(NotificationUser::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasManyThrough(
+            Notification::class,
+            NotificationUser::class,
+            'user_id',          // Foreign key on notification_user table
+            'id',               // Foreign key on notifications table
+            'id',               // Local key on users table
+            'notification_id'   // Local key on notification_user table
+        );
+    }
+
+    // Optional helper: get unread notifications only
+    public function unreadNotifications()
+    {
+        return $this->notifications()->wherePivot('read', false);
+    }
 }

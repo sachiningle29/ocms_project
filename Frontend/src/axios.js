@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api', // This is the key part
+//   baseURL: 'http://10.205.151.96:8000/api', // This is the key part
+//changed URL BY sachin on 30-06-26
+  baseURL: "http://127.0.0.1:8000/api",
+// baseURL: "http://localhost:8000/api",
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
@@ -16,3 +19,5 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 export default axiosClient;
+
+

@@ -6,6 +6,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use App\Models\SubSection;
+
 
 class UserController extends Controller
 {
@@ -101,5 +104,55 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'User deleted successfully']);
+    }
+
+
+    public function getUserDetails(){
+
+        $userId = Auth::id();
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        // Fetch user with section info
+        $user = User::where('users.id', $userId)
+            ->leftJoin('sections', 'users.section_id', '=', 'sections.id')
+            ->select(
+                'users.*',
+                'sections.id as section_id',
+                'sections.section_name as section_name'
+            )
+            ->first();
+
+        // Get sub-sections for the user's section
+        $subSections = [];
+        if ($user && $user->section_id) {
+            $subSections = SubSection::where('section_id', $user->section_id)
+                ->select('id', 'sub_section_name')
+                ->get()
+                ->map(function ($subSection) {
+                    return [
+                        'label' => $subSection->sub_section_name,
+                        'value' => $subSection->id
+                    ];
+                });
+        }
+
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'userdata' => $user ?? null,
+                'section' => [
+                    'id' => $user->section_id ?? null,
+                    'name' => $user->section_name ?? null
+                ],
+                'sub_sections' => $subSections
+            ]
+        ]);
+
     }
 }

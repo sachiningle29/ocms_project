@@ -27,7 +27,8 @@ const model = computed(() => {
                             { label: 'Section', icon: 'pi pi-fw pi-image', to: { name: 'section' } },
                             { label: 'Sub-Section', icon: 'pi pi-fw pi-clone', to: { name: 'subsection' } }
                         ]
-                    }
+                    },
+                    { label: 'Procurement Case', icon: 'pi pi-fw pi-image', to: '/admin/hiringcontracts' },
                 ]
             }
         ];
@@ -36,8 +37,8 @@ const model = computed(() => {
             {
                 items: [
                     { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: dashboardPath.value },
-                    { label: 'Running Contract', icon: 'pi pi-fw pi-clone', to: '/user/runningcontracts' },
-                    { label: 'Under Hiring Contract', icon: 'pi pi-fw pi-image', to: '/user/hiringcontracts' },
+                    //{ label: 'Running Contract', icon: 'pi pi-fw pi-clone', to: '/user/runningcontracts' },
+                    { label: 'Procurement case', icon: 'pi pi-fw pi-image', to: '/user/hiringcontracts' },
                     { label: 'Add Milestone', icon: 'pi pi-fw pi-calendar', to: '' }
                 ]
             }

@@ -7,13 +7,13 @@ const router = createRouter({
         {
             path: '/',
             name: 'welcome',
-            component: () => import('@/views/pages/auth/Welcome.vue'),
+            component: () => import('@/views/auth/Welcome.vue'),
             meta: { requiresAuth: false }
         },
         {
             path: '/auth/UserLogin',
             name: 'UserLogin',
-            component: () => import('@/views/pages/auth/UserLogin.vue'),
+            component: () => import('@/views/auth/UserLogin.vue'),
             meta: { requiresAuth: false }
         },
         {
@@ -34,15 +34,10 @@ const router = createRouter({
                    {
                     path: '/auth/logout',
                     name: 'logout',
-                    component: () => import('@/views/pages/auth/Logout.vue'),
+                    component: () => import('@/views/auth/Logout.vue'),
                     meta: { requiresAuth: false }
                 },
-                {
-                    path: '/dashboard',
-                    name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
-                },
-             
+            
                 {
                     path: '/admin/dashboard',
                     name: 'Admindashboard',
@@ -73,78 +68,25 @@ const router = createRouter({
                     component: () => import('@/views/admin/Section/SubSection.vue'),
                     meta: { requiresAuth: true, requiresAdmin: true }
                 },
-
                 {
-                    path: '/uikit/input',
-                    name: 'input',
-                    component: () => import('@/views/uikit/InputDoc.vue')
+                    path: '/user/runningcontracts',
+                    name: 'RunningContracts',
+                    component: () => import('@/views/user/running_contract/RunningContract.vue'),
+                    meta: { requiresAuth: true, requiresUser: true }
                 },
                 {
-                    path: '/uikit/button',
-                    name: 'button',
-                    component: () => import('@/views/uikit/ButtonDoc.vue')
+                    path: '/user/hiringcontracts',
+                    name: 'HiringContracts',
+                    component: () => import('@/views/user/hiring_contract/HiringContract.vue'),
+                    meta: { requiresAuth: true, requiresUser: true }
                 },
                 {
-                    path: '/uikit/table',
-                    name: 'table',
-                    component: () => import('@/views/uikit/TableDoc.vue')
+                    path: '/admin/hiringcontracts',
+                    name: 'AdminHiringContracts',
+                    component: () => import('@/views/admin/hiring_contract/HiringContract.vue'),
+                    meta: { requiresAuth: true, requiresAdmin: true }
                 },
-                {
-                    path: '/uikit/list',
-                    name: 'list',
-                    component: () => import('@/views/uikit/ListDoc.vue')
-                },
-                {
-                    path: '/uikit/tree',
-                    name: 'tree',
-                    component: () => import('@/views/uikit/TreeDoc.vue')
-                },
-                {
-                    path: '/uikit/panel',
-                    name: 'panel',
-                    component: () => import('@/views/uikit/PanelsDoc.vue')
-                },
-
-                {
-                    path: '/uikit/overlay',
-                    name: 'overlay',
-                    component: () => import('@/views/uikit/OverlayDoc.vue')
-                },
-                {
-                    path: '/uikit/media',
-                    name: 'media',
-                    component: () => import('@/views/uikit/MediaDoc.vue')
-                },
-                {
-                    path: '/uikit/message',
-                    name: 'message',
-                    component: () => import('@/views/uikit/MessagesDoc.vue')
-                },
-                {
-                    path: '/uikit/file',
-                    name: 'file',
-                    component: () => import('@/views/uikit/FileDoc.vue')
-                },
-                {
-                    path: '/uikit/menu',
-                    name: 'menu',
-                    component: () => import('@/views/uikit/MenuDoc.vue')
-                },
-                {
-                    path: '/uikit/charts',
-                    name: 'charts',
-                    component: () => import('@/views/uikit/ChartDoc.vue')
-                },
-                {
-                    path: '/uikit/misc',
-                    name: 'misc',
-                    component: () => import('@/views/uikit/MiscDoc.vue')
-                },
-                {
-                    path: '/uikit/timeline',
-                    name: 'timeline',
-                    component: () => import('@/views/uikit/TimelineDoc.vue')
-                },
+               
                 {
                     path: '/pages/empty',
                     name: 'empty',
@@ -160,18 +102,7 @@ const router = createRouter({
                     name: 'documentation',
                     component: () => import('@/views/pages/Documentation.vue')
                 },
-                {
-                    path: '/user/runningcontracts',
-                    name: 'RunningContracts',
-                    component: () => import('@/views/user/running_contract/RunningContract.vue'),
-                    meta: { requiresAuth: true, requiresUser: true }
-                },
-                {
-                    path: '/user/hiringcontracts',
-                    name: 'HiringContracts',
-                    component: () => import('@/views/user/hiring_contract/HiringContract.vue'),
-                    meta: { requiresAuth: true, requiresUser: true }
-                },
+                
                 {
                     path: '/user/ItemCrud',
                     name: 'ItemCrud',

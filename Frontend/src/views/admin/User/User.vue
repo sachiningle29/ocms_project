@@ -64,7 +64,7 @@ function loadUsers() {
         .then((response) => {
             users.value = response.data || [];
 
-            console.warn(response);
+           
         })
         .catch((error) => {
             console.error('loadUsers error:', error.response?.data || error.message);
