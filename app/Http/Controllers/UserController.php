@@ -14,7 +14,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        // $users = User::all();
+        $users = User::where('email', '!=', 'admin@gmail.com')->get();
         return response()->json($users);
     }
 
@@ -32,7 +33,10 @@ class UserController extends Controller
                 'section_id' => 'nullable|integer',
             ]);
 
+
+
             $user = new User();
+
             $user->name = $validated['name'];
             $user->email = $validated['email'];
             $user->cpf_no = $validated['cpf_no'] ?? null;
@@ -61,6 +65,12 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::find($id);
+        // echo $user;
+        // echo "this is testing";
+        // exit;
+        // dd($request->all());
+
+
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
